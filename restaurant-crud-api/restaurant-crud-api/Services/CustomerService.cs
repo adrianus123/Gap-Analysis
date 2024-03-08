@@ -34,58 +34,64 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsCustomerExist(customerId))
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
+                if (customer != null)
+                {
+                    return new ResponseAPI<CustomerResponse>
+                    {
+                        Data = new CustomerResponse
+                        {
+                            CustomerId = customer.CustomerId,
+                            CustomerName = customer.CustomerName,
+                            CustomerAddress = customer.CustomerAddress,
+                            CustomerPhone = customer.CustomerPhone,
+                        },
+                        Message = "Successfully loaded customer data"
+                    };
+                }
+                else
                 {
                     return new ResponseAPI<CustomerResponse>
                     {
                         Message = "Customer not found"
                     };
                 }
-
-                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
-                var response = new CustomerResponse
-                {
-                    CustomerId = customer.CustomerId,
-                    CustomerName = customer.CustomerName,
-                    CustomerAddress = customer.CustomerAddress,
-                    CustomerPhone = customer.CustomerPhone,
-                };
-
-                return new ResponseAPI<CustomerResponse>
-                {
-                    Data = response,
-                    Message = "Successfully loaded customer data"
-                };
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
         public ResponseAPI<CustomerResponse> AddCustomer(CustomerRequest request)
         {
+            var newCustomer = new Customer
+            {
+                CustomerName = request.CustomerName,
+                CustomerAddress = request.CustomerAddress,
+                CustomerPhone = request.CustomerPhone
+            };
+
             try
             {
-                _context.Customers.Add(new Customer
-                {
-                    CustomerName = request.CustomerName,
-                    CustomerAddress = request.CustomerAddress,
-                    CustomerPhone = request.CustomerPhone
-                });
-
+                _context.Customers.Add(newCustomer);
                 _context.SaveChanges();
 
                 return new ResponseAPI<CustomerResponse>
                 {
+                    Data = new CustomerResponse
+                    {
+                        CustomerId = newCustomer.CustomerId,
+                        CustomerName = newCustomer.CustomerName,
+                        CustomerAddress = newCustomer.CustomerAddress,
+                        CustomerPhone = newCustomer.CustomerPhone,
+                    },
                     Message = "Successfully added customer data"
                 };
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -93,38 +99,37 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsCustomerExist(customerId))
+                var customer = _context.Customers.FirstOrDefault(x => x.CustomerId == customerId);
+                if (customer != null)
+                {
+                    customer.CustomerName = request.CustomerName;
+                    customer.CustomerAddress = request.CustomerAddress;
+                    customer.CustomerPhone = request.CustomerPhone;
+                    _context.SaveChanges();
+
+                    return new ResponseAPI<CustomerResponse>
+                    {
+                        Data = new CustomerResponse
+                        {
+                            CustomerId = customerId,
+                            CustomerName = customer.CustomerName,
+                            CustomerAddress = customer.CustomerAddress,
+                            CustomerPhone = customer.CustomerPhone
+                        },
+                        Message = "Successfully updated customer data"
+                    };
+                }
+                else
                 {
                     return new ResponseAPI<CustomerResponse>
                     {
                         Message = "Customer not found"
                     };
                 }
-
-                var customer = _context.Customers.FirstOrDefault(x => x.CustomerId == customerId);
-                customer.CustomerName = request.CustomerName;
-                customer.CustomerAddress = request.CustomerAddress;
-                customer.CustomerPhone = request.CustomerPhone;
-                _context.SaveChanges();
-
-                var response = new CustomerResponse
-                {
-                    CustomerId = customerId,
-                    CustomerName = customer.CustomerName,
-                    CustomerAddress = customer.CustomerAddress,
-                    CustomerPhone = customer.CustomerPhone
-                };
-
-                return new ResponseAPI<CustomerResponse>
-                {
-                    Data = response,
-                    Message = "Successfully updated customer data"
-                };
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -132,33 +137,29 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsCustomerExist(customerId))
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
+                if (customer != null)
+                {
+                    _context.Customers.Remove(customer);
+                    _context.SaveChanges();
+
+                    return new ResponseAPI<CustomerResponse>
+                    {
+                        Message = "Successfully deleted customer data"
+                    };
+                }
+                else
                 {
                     return new ResponseAPI<CustomerResponse>
                     {
                         Message = "Customer not found"
                     };
                 }
-
-                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
-                _context.Customers.Remove(customer);
-                _context.SaveChanges();
-
-                return new ResponseAPI<CustomerResponse>
-                {
-                    Message = "Successfully deleted customer data"
-                };
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
-        }
-
-        public bool IsCustomerExist(int customerId)
-        {
-            return _context.Customers.Any(x => x.CustomerId == customerId);
         }
     }
 }

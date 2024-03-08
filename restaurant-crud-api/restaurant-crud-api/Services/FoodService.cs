@@ -1,4 +1,5 @@
-﻿using restaurant_crud_api.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using restaurant_crud_api.Data;
 using restaurant_crud_api.Data.DTO;
 using restaurant_crud_api.Data.DTO.Request;
 using restaurant_crud_api.Data.DTO.Response;
@@ -24,8 +25,7 @@ namespace restaurant_crud_api.Services
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -33,55 +33,61 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsFoodExist(foodId))
+                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
+                if (food != null)
                 {
                     return new ResponseAPI<FoodResponse>
                     {
-                        Message = "Food not found",
+                        Data = new FoodResponse
+                        {
+                            FoodId = food.FoodId,
+                            FoodName = food.FoodName,
+                            FoodPrice = food.FoodPrice
+                        },
+                        Message = "Successfully loaded food data"
                     };
                 }
-
-                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
-                var response = new FoodResponse
+                else
                 {
-                    FoodId = food.FoodId,
-                    FoodName = food.FoodName,
-                    FoodPrice = food.FoodPrice
-                };
-
-                return new ResponseAPI<FoodResponse>
-                {
-                    Data = response,
-                    Message = "Successfully loaded food data"
-                };
+                    return new ResponseAPI<FoodResponse>
+                    {
+                        Message = "Food not found"
+                    };
+                }
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
         public ResponseAPI<FoodResponse> AddFood(FoodRequest request)
         {
+            var newFood = new Food
+            {
+                FoodName = request.FoodName,
+                FoodPrice = request.FoodPrice
+            };
+
             try
             {
-                _context.Foods.Add(new Food
-                {
-                    FoodName = request.FoodName,
-                    FoodPrice = request.FoodPrice
-                });
+                _context.Foods.Add(newFood);
                 _context.SaveChanges();
 
                 return new ResponseAPI<FoodResponse>
                 {
+                    Data = new FoodResponse
+                    {
+                        FoodId = newFood.FoodId,
+                        FoodName = newFood.FoodName,
+                        FoodPrice = newFood.FoodPrice
+                    },
                     Message = "Successfully added food data"
                 };
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -89,36 +95,35 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsFoodExist(foodId))
+                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
+                if (food != null)
+                {
+                    food.FoodName = request.FoodName;
+                    food.FoodPrice = request.FoodPrice;
+                    _context.SaveChanges();
+
+                    return new ResponseAPI<FoodResponse>
+                    {
+                        Data = new FoodResponse
+                        {
+                            FoodId = food.FoodId,
+                            FoodName = food.FoodName,
+                            FoodPrice = food.FoodPrice
+                        },
+                        Message = "Successfully updated food data"
+                    };
+                }
+                else
                 {
                     return new ResponseAPI<FoodResponse>
                     {
-                        Message = "Food not found",
+                        Message = "Food not found"
                     };
                 }
-
-                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
-                food.FoodName = request.FoodName;
-                food.FoodPrice = request.FoodPrice;
-                _context.SaveChanges();
-
-                var response = new FoodResponse
-                {
-                    FoodId = food.FoodId,
-                    FoodName = food.FoodName,
-                    FoodPrice = food.FoodPrice
-                };
-
-                return new ResponseAPI<FoodResponse>
-                {
-                    Data = response,
-                    Message = "Successfully updated food data"
-                };
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -126,33 +131,29 @@ namespace restaurant_crud_api.Services
         {
             try
             {
-                if (!IsFoodExist(foodId))
+                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
+                if (food != null)
+                {
+                    _context.Remove(food);
+                    _context.SaveChanges();
+
+                    return new ResponseAPI<FoodResponse>
+                    {
+                        Message = "Successfully deleted food data"
+                    };
+                }
+                else
                 {
                     return new ResponseAPI<FoodResponse>
                     {
-                        Message = "Food not found",
+                        Message = "Food not found"
                     };
-                }
-
-                var food = _context.Foods.FirstOrDefault(f => f.FoodId == foodId);
-                _context.Remove(food);
-                _context.SaveChanges();
-
-                return new ResponseAPI<FoodResponse>
-                {
-                    Message = "Successfully deleted food data"
                 };
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                throw new Exception(innerException.Message);
+                throw new Exception(ex.Message);
             }
-        }
-
-        public bool IsFoodExist(int foodId)
-        {
-            return _context.Foods.Any(f => f.FoodId == foodId);
         }
     }
 }

@@ -19,13 +19,21 @@ namespace restaurant_crud_api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Customer>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CustomerResponse>))]
         public IActionResult GetCustomers()
         {
             try
             {
-                var customers = _customerService.GetCustomers();
-                return Ok(customers);
+                var data = _customerService.GetCustomers();
+                var response = data.Select(c => new CustomerResponse
+                {
+                    CustomerId = c.CustomerId,
+                    CustomerName = c.CustomerName,
+                    CustomerAddress = c.CustomerAddress,
+                    CustomerPhone = c.CustomerPhone
+                });
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
