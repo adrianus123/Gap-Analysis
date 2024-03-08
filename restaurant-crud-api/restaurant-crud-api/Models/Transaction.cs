@@ -31,11 +31,9 @@ namespace restaurant_crud_api.Models
         public DateTime TransactionDate { get; set; }
 
         [Column("created_at")]
-        [Required]
         public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        [Required]
         public DateTime UpdatedAt { get; set; }
 
         public Customer Customer { get; set; }

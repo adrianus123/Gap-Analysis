@@ -21,11 +21,9 @@ namespace restaurant_crud_api.Models
         public decimal FoodPrice { get; set; }
 
         [Column("created_at")]
-        [Required]
         public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        [Required]
         public DateTime UpdatedAt { get; set; }
     }
 }
