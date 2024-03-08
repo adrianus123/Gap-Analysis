@@ -14,6 +14,7 @@ namespace restaurant_crud_api.Data
         public DbSet<Food> Foods { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
+
         public override int SaveChanges()
         {
             foreach (var entry in ChangeTracker.Entries())

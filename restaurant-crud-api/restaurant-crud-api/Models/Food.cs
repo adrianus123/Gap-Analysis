@@ -25,5 +25,7 @@ namespace restaurant_crud_api.Models
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }
