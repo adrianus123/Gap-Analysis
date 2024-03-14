@@ -3,8 +3,6 @@ using restaurant_crud_api.Data.DTO;
 using restaurant_crud_api.Data.DTO.Request;
 using restaurant_crud_api.Data.DTO.Response;
 using restaurant_crud_api.Interfaces;
-using restaurant_crud_api.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace restaurant_crud_api.Controllers
 {

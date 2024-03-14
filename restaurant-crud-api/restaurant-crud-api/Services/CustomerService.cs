@@ -1,6 +1,4 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
-using restaurant_crud_api.Data;
+﻿using restaurant_crud_api.Data;
 using restaurant_crud_api.Data.DTO;
 using restaurant_crud_api.Data.DTO.Request;
 using restaurant_crud_api.Data.DTO.Response;
