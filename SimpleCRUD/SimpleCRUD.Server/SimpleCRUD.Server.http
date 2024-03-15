@@ -1,0 +1,6 @@
+@SimpleCRUD.Server_HostAddress = http://localhost:5051
+
+GET {{SimpleCRUD.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
