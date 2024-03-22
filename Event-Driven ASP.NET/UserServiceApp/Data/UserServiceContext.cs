@@ -11,5 +11,6 @@ namespace UserServiceApp.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<IntegrationEvent> IntegrationEventOutBox { get; set; }
     }
 }

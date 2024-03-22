@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UserServiceApp.Data;
+using UserServiceApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ builder.Services.AddDbContext<UserServiceContext>(options =>
 {
     options.UseSqlite(@"Data Source=user.db");
 });
+
+builder.Services.AddSingleton<IntegrationEventSenderService>();
+builder.Services.AddHostedService<IntegrationEventSenderService>(provider => provider.GetService<IntegrationEventSenderService>());
 
 var app = builder.Build();
 

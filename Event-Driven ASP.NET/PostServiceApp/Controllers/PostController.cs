@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PostServiceApp.Data;
 using PostServiceApp.Models;
 
@@ -18,6 +19,12 @@ namespace PostServiceApp.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPost()
+        {
+            return await _context.Post.Include(x => x.User).ToListAsync();
+        }
+
+        [HttpPost]
         public async Task<ActionResult<Post>> Post(Post post)
         {
             _context.Post.Add(post);
