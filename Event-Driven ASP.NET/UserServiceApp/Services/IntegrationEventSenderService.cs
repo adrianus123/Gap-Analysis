@@ -37,6 +37,9 @@ namespace UserServiceApp.Services
                 var factory = new ConnectionFactory();
                 var connection = factory.CreateConnection();
                 var channel = connection.CreateModel();
+                channel.ConfirmSelect();
+                IBasicProperties props = channel.CreateBasicProperties();
+                props.DeliveryMode = 2;
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
@@ -47,7 +50,7 @@ namespace UserServiceApp.Services
                         foreach (var e in events)
                         {
                             var body = Encoding.UTF8.GetBytes(e.Data);
-                            //channel.BasicPublish(exchange: "user", routingKey: e.Event, basicProperties: null, body: body);
+                            channel.BasicPublish(exchange: "user", routingKey: e.Event, basicProperties: props, body: body);
                             channel.WaitForConfirmsOrDie(new TimeSpan(0, 0, 5));
                             Console.WriteLine("Published: " + e.Event + " " + e.Data);
                             dbContext.Remove(e);
@@ -74,13 +77,11 @@ namespace UserServiceApp.Services
                             Console.WriteLine("Shutting down.");
                         }
                     }
-
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                //await Task.Delay(5000, stoppingToken);
             }
         }
 

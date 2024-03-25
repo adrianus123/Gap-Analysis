@@ -55,6 +55,7 @@ static void ListenForIntegrationEvents(IHost host)
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
         Console.WriteLine(" [x] Received {0}", message);
+
         var data = JObject.Parse(message);
         var type = ea.RoutingKey;
 
@@ -96,5 +97,5 @@ static void ListenForIntegrationEvents(IHost host)
         }
         channel.BasicAck(ea.DeliveryTag, false);
     };
-    channel.BasicConsume(queue: "user.postservice", autoAck: true, consumer: consumer);
+    channel.BasicConsume(queue: "user.postservice", autoAck: false, consumer: consumer);
 }

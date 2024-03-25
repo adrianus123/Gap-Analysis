@@ -48,7 +48,8 @@ namespace UserServiceApp.Controllers
             var integrationEventData = JsonConvert.SerializeObject(new
             {
                 id = user.ID,
-                newname = user.Name
+                newname = user.Name,
+                version = user.Version
             });
 
             _context.IntegrationEventOutBox.Add(new IntegrationEvent()
@@ -61,8 +62,6 @@ namespace UserServiceApp.Controllers
             transaction.Commit();
             _integrationEventSenderService.StartPublishingOutstandingIntegrationEvents();
 
-            //PublishToMessageQueue("user.update", integrationEventData);
-
             return NoContent();
         }
 
@@ -73,7 +72,7 @@ namespace UserServiceApp.Controllers
             using var transaction = _context.Database.BeginTransaction();
 
             _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             var integrationEventData = JsonConvert.SerializeObject(new
             {
@@ -91,8 +90,6 @@ namespace UserServiceApp.Controllers
             _context.SaveChanges();
             transaction.Commit();
             _integrationEventSenderService.StartPublishingOutstandingIntegrationEvents();
-
-            //PublishToMessageQueue("user.add", integrationEventData);
 
             return CreatedAtAction("GetUser", new { id = user.ID }, user);
         }
