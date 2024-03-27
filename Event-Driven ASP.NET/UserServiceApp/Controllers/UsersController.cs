@@ -28,15 +28,6 @@ namespace UserServiceApp.Controllers
             return await _context.User.ToListAsync();
         }
 
-        private void PublishToMessageQueue(string integrationEvent, string eventData)
-        {
-            var factory = new ConnectionFactory();
-            var connection = factory.CreateConnection();
-            var channel = connection.CreateModel();
-            var body = Encoding.UTF8.GetBytes(eventData);
-            channel.BasicPublish(exchange: "user", routingKey: integrationEvent, basicProperties: null, body: body);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -72,7 +63,7 @@ namespace UserServiceApp.Controllers
             using var transaction = _context.Database.BeginTransaction();
 
             _context.User.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var integrationEventData = JsonConvert.SerializeObject(new
             {

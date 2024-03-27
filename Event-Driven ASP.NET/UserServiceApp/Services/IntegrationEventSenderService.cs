@@ -84,7 +84,5 @@ namespace UserServiceApp.Services
                 Console.WriteLine(ex.ToString());
             }
         }
-
-
     }
 }
