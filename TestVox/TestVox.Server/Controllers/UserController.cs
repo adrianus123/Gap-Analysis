@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -100,11 +101,13 @@ namespace TestVox.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser([FromRoute] int id)
         {
+            _logger.LogInformation("Received get user request.");
+
             var token = HttpContext.Request.Headers.Authorization;
 
             if (token.IsNullOrEmpty())
             {
-                return BadRequest("Token is required!");
+                return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
             }
 
             var client = _clientFactory.CreateClient();
@@ -113,11 +116,13 @@ namespace TestVox.Server.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                _logger.LogInformation("Success load data user id " + id);
                 var responseData = await response.Content.ReadAsStringAsync();
                 return Ok(responseData);
             }
             else
             {
+                _logger.LogError(response.Content.ReadAsStringAsync().Result);
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -125,10 +130,25 @@ namespace TestVox.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
+            _logger.LogInformation("Received update user data request.");
+
             var token = HttpContext.Request.Headers.Authorization;
             if (token.IsNullOrEmpty())
             {
-                return StatusCode((int)HttpStatusCode.BadRequest, "Token is required!");
+                return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
+            }
+
+            UpdateUserValidator validator = new UpdateUserValidator();
+            ValidationResult results = validator.Validate(request);
+
+            if (!results.IsValid)
+            {
+                foreach (var failure in results.Errors)
+                {
+                    _logger.LogError("Property " + failure.PropertyName + " failed validation. Error was: " + failure.ErrorMessage);
+                }
+
+                return StatusCode((int)HttpStatusCode.BadRequest, results.Errors);
             }
 
             var client = _clientFactory.CreateClient();
@@ -140,11 +160,13 @@ namespace TestVox.Server.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                _logger.LogInformation("Update user data successfully.");
                 var responseData = await response.Content.ReadAsStringAsync();
                 return Ok(responseData);
             }
             else
             {
+                _logger.LogError(response.Content.ReadAsStringAsync().Result);
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -152,10 +174,25 @@ namespace TestVox.Server.Controllers
         [HttpPut("{id}/password")]
         public async Task<IActionResult> ChangePassword([FromRoute] int id, [FromBody] ChangePasswordRequest request)
         {
+            _logger.LogInformation("Received change password request.");
+
             var token = HttpContext.Request.Headers.Authorization;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.BadRequest, "Token is required!");
+            }
+
+            ChangePasswordValidator validator = new ChangePasswordValidator();
+            ValidationResult results = validator.Validate(request);
+
+            if (!results.IsValid)
+            {
+                foreach (var failure in results.Errors)
+                {
+                    _logger.LogError("Property " + failure.PropertyName + " failed validation. Error was: " + failure.ErrorMessage);
+                }
+
+                return StatusCode((int)HttpStatusCode.BadRequest, results.Errors);
             }
 
             var client = _clientFactory.CreateClient();
@@ -167,11 +204,13 @@ namespace TestVox.Server.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                _logger.LogInformation("Change password successfully");
                 var responseData = await response.Content.ReadAsStringAsync();
                 return Ok(responseData);
             }
             else
             {
+                _logger.LogError(response.Content.ReadAsStringAsync().Result);
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -179,10 +218,12 @@ namespace TestVox.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
+            _logger.LogInformation("Received detele user request.");
+
             var token = HttpContext.Request.Headers.Authorization;
             if (token.IsNullOrEmpty())
             {
-                return StatusCode((int)HttpStatusCode.BadRequest, "Token is required!");
+                return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
             }
 
             var client = _clientFactory.CreateClient();
@@ -192,11 +233,13 @@ namespace TestVox.Server.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                _logger.LogInformation("Delete user successfullly.");
                 var responseData = await response.Content.ReadAsStringAsync();
                 return Ok(responseData);
             }
             else
             {
+                _logger.LogError(response.Content.ReadAsStringAsync().Result);
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
