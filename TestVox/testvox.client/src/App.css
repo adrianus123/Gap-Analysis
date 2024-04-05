@@ -1,4 +1,4 @@
-﻿#root {
+﻿/*#root {
     max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
@@ -16,4 +16,16 @@ tr:nth-child(odd) {
 th, td {
     padding-left: 1rem;
     padding-right: 1rem;
+}*/
+
+.button {
+    cursor: pointer;
+    border: 2px solid #FFF;
+    transition: 0.3s;
+}
+
+.button:hover {
+    background: #FFF;
+    color: #050801;
+    box-shadow: 0 0 5px #FFF, 0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #FFF;
 }
