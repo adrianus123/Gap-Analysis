@@ -12,11 +12,11 @@ function InputTextComp({ id, name }) {
           <div className="relative w-full">
               {
                   isOpen ?
-                      <FaRegEyeSlash onClick={seePassword} className="absolute text-white right-2.5 top-2.5 cursor-pointer" />
+                      <FaRegEyeSlash onClick={seePassword} className="absolute text-white right-2.5 top-1/3 cursor-pointer" />
                       :
-                      <FaRegEye onClick={seePassword} className="absolute text-white right-2.5 top-2.5 cursor-pointer" />
+                      <FaRegEye onClick={seePassword} className="absolute text-white right-2.5 top-1/3 cursor-pointer" />
               }
-              <input id={id} name={id} type={isOpen ? "text" : "password"} className="px-2 border-2 text-white rounded w-full leading-8 bg-transparent focus:outline-none" required />
+              <input id={id} name={id} type={isOpen ? "text" : "password"} className="px-2 border-2 border-white text-white rounded w-full leading-8 bg-transparent focus:outline-none" required />
           </div>
       </div>
   );

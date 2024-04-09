@@ -3,7 +3,7 @@ import InputPasswordComp from "../components/InputPasswordComp";
 
 function RegisterPage() {
     return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen py-4">
             <div className="lg:p-12 border-2 space-y-8 rounded-xl lg:backdrop-blur-sm">
                 <div className="space-y-2">
                     <h1 className="text-4xl text-white text-center">Create Account</h1>

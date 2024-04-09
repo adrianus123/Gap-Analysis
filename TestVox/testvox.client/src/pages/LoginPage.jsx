@@ -1,7 +1,13 @@
 import InputTextComp from "../components/InputTextComp";
 import InputPasswordComp from "../components/InputPasswordComp";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
+    const navigate = useNavigate();
+
+    const handleSubmit = () => {
+        navigate('/home');
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen">
@@ -11,7 +17,7 @@ function LoginPage() {
                     <h5 className="text-white text-sm text-center">Please login to access your account</h5>
                 </div>
 
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <InputTextComp id="email" type="email" name="Email" />
                     <InputPasswordComp id="password" name="Password" />
 
