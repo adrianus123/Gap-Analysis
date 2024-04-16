@@ -8,7 +8,7 @@ function InputTextComp({ id, name }) {
     }
   return (
       <div className="flex flex-col items-start">
-          <label for={id} className="text-md text-white after:content-['*']">{name}</label>
+          <label htmlFor={id} className="text-md text-white">{name}</label>
           <div className="relative w-full">
               {
                   isOpen ?

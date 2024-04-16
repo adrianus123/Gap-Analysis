@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\layouts\" />
+    <Folder Include="src\apis\" />
     <Folder Include="src\pages\" />
   </ItemGroup>
 </Project>
