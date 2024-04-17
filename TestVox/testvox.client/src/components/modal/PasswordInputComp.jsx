@@ -2,7 +2,7 @@ import { IconButton, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-const PasswordInputComp = ({ name }) => {
+const PasswordInputComp = ({ name, isError, errorMessage, ...props }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(!open);
@@ -12,34 +12,43 @@ const PasswordInputComp = ({ name }) => {
       <Typography className="-mb-2" variant="h6">
         {name}
       </Typography>
-      <div className="relative flex w-full">
-        <Input
-          type={open ? "text" : "password"}
-          label={name}
-          className="pr-8"
-          containerProps={{
-            className: "min-w-0",
-          }}
-        />
-        {!open ? (
-          <IconButton
-            onClick={handleOpen}
-            size="sm"
-            className="!absolute right-1 top-1 rounded"
-            variant="text"
-          >
-            <FaRegEye />
-          </IconButton>
-        ) : (
-          <IconButton
-            onClick={handleOpen}
-            size="sm"
-            className="!absolute right-1 top-1 rounded"
-            variant="text"
-          >
-            <FaRegEyeSlash />
-          </IconButton>
-        )}
+      <div>
+        <div className="relative flex w-full">
+          <Input
+            type={open ? "text" : "password"}
+            label={name}
+            className="pr-8"
+            containerProps={{
+              className: "min-w-0",
+            }}
+            error={isError}
+            {...props}
+          />
+          {!open ? (
+            <IconButton
+              onClick={handleOpen}
+              size="sm"
+              className="!absolute right-1 top-1 rounded"
+              variant="text"
+            >
+              <FaRegEye />
+            </IconButton>
+          ) : (
+            <IconButton
+              onClick={handleOpen}
+              size="sm"
+              className="!absolute right-1 top-1 rounded"
+              variant="text"
+            >
+              <FaRegEyeSlash />
+            </IconButton>
+          )}
+        </div>
+        {isError ? (
+          <Typography variant="small" color="red" className="mt-1">
+            {errorMessage}
+          </Typography>
+        ) : null}
       </div>
     </div>
   );

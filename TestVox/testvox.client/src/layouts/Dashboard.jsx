@@ -4,7 +4,7 @@ import CardComp from "../components/CardComp";
 import { useEffect, useState } from "react";
 import { GetOrganizers } from "../apis";
 import { Button, Typography } from "@material-tailwind/react";
-import CreateUpdateModalComp from "../components/organizers/CreateUpdateModalComp";
+import CreateUpdateModalComp from "../components/modal/CreateUpdateModalComp";
 
 function Dashboard() {
   const [data, setData] = useState([]);

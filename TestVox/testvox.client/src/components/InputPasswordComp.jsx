@@ -1,24 +1,52 @@
+import { IconButton, Input, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-function InputTextComp({ id, name }) {
-    const [isOpen, setIsOpen] = useState(false);
 
-    const seePassword = () => {
-        setIsOpen(!isOpen);
-    }
+function InputTextComp({ id, name, isError, errorMessage, ...props }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+  };
   return (
-      <div className="flex flex-col items-start">
-          <label htmlFor={id} className="text-md text-white">{name}</label>
-          <div className="relative w-full">
-              {
-                  isOpen ?
-                      <FaRegEyeSlash onClick={seePassword} className="absolute text-white right-2.5 top-1/3 cursor-pointer" />
-                      :
-                      <FaRegEye onClick={seePassword} className="absolute text-white right-2.5 top-1/3 cursor-pointer" />
-              }
-              <input id={id} name={id} type={isOpen ? "text" : "password"} className="px-2 border-2 border-white text-white rounded w-full leading-8 bg-transparent focus:outline-none" required />
-          </div>
+    <div className="flex flex-col items-start">
+      <div className="relative w-full">
+        <Input
+          label={name}
+          color="white"
+          id={id}
+          name={id}
+          className="pr-8"
+          type={isOpen ? "text" : "password"}
+          error={isError}
+          {...props}
+        />
+        {isError ? (
+          <Typography variant="small" color="red" className="mt-1">
+            {errorMessage}
+          </Typography>
+        ) : null}
+        {isOpen ? (
+          <IconButton
+            onClick={handleOpen}
+            className="!absolute right-1 top-1 text-white"
+            variant="text"
+            size="sm"
+          >
+            <FaRegEyeSlash />
+          </IconButton>
+        ) : (
+          <IconButton
+            onClick={handleOpen}
+            className="!absolute right-1 top-1 text-white"
+            variant="text"
+            size="sm"
+          >
+            <FaRegEye />
+          </IconButton>
+        )}
       </div>
+    </div>
   );
 }
 

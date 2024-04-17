@@ -8,8 +8,8 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import CreateUpdateModalComp from "./organizers/CreateUpdateModalComp";
-import DetailModalComp from "./organizers/DetailModalComp";
+import CreateUpdateModalComp from "./modal/CreateUpdateModalComp";
+import DetailModalComp from "./modal/DetailModalComp";
 import ConfirmDeleteModal from "./modal/ConfirmDeleteModal";
 
 function CardComp({ name, imageUrl }) {

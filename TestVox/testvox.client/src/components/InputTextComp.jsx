@@ -1,10 +1,24 @@
-function InputTextComp({ id, type, name }) {
-    return (
-        <div className="flex flex-col items-start">
-            <label htmlFor={id} className="text-md text-white">{name}</label>
-            <input id={id} name={id} type={type} className="px-2 border-2 border-white text-white rounded w-full leading-8 bg-transparent focus:outline-none" required/>
-        </div>
-    );
+import { Input, Typography } from "@material-tailwind/react";
+
+function InputTextComp({ id, type, name, isError, errorMessage, ...props }) {
+  return (
+    <div className="flex flex-col items-start">
+      <Input
+        label={name}
+        id={id}
+        name={id}
+        type={type}
+        color="white"
+        error={isError}
+        {...props}
+      />
+      {isError ? (
+        <Typography variant="small" color="red" className="mt-1">
+          {errorMessage}
+        </Typography>
+      ) : null}
+    </div>
+  );
 }
 
 export default InputTextComp;
