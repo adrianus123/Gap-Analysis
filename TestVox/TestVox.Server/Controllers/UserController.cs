@@ -94,7 +94,7 @@ namespace TestVox.Server.Controllers
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
-                return StatusCode((int)response.StatusCode, "User login failed");
+                return StatusCode((int)response.StatusCode, "Email or password is incorrect");
             }
         }
 

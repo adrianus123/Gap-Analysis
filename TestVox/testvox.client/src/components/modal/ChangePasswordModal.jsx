@@ -8,17 +8,13 @@ import {
   Typography,
   IconButton,
 } from "@material-tailwind/react";
-import { FaLock } from "react-icons/fa";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import PasswordInputComp from "./PasswordInputComp";
-import DropdownButtonComp from "../DropdownButtonComp";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { ChangePassword } from "../../apis";
 
-const ChangePasswordModal = () => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen((cur) => !cur);
-
+const ChangePasswordModal = ({open, handleOpen}) => {
   const formik = useFormik({
     initialValues: {
       oldPassword: "",
@@ -30,6 +26,10 @@ const ChangePasswordModal = () => {
         .min(6, "Old password must be 6 characters long.")
         .required("Required"),
       newPassword: Yup.string()
+        .matches(
+          "(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])",
+          "Must contain uppercase, lowercase, and special characters"
+        )
         .min(6, "New password must be 6 characters long.")
         .required("Required"),
       repeatPassword: Yup.string()
@@ -37,17 +37,17 @@ const ChangePasswordModal = () => {
         .required("Required"),
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      changePassword(values);
     },
   });
 
+  const changePassword = async (data) => {
+    const response = await ChangePassword(data);
+    console.log(response);
+  };
+
   return (
     <>
-      <DropdownButtonComp
-        name="Change Password"
-        icon={<FaLock />}
-        action={handleOpen}
-      />
       <Dialog
         size="xs"
         open={open}

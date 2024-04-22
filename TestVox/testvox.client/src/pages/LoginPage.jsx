@@ -3,9 +3,19 @@ import InputPasswordComp from "../components/InputPasswordComp";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { SignIn } from "../apis";
+import AlertComp from "../components/AlertComp";
+import { useState } from "react";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const handleOpen = () => setOpen(!open);
 
   const formik = useFormik({
     initialValues: {
@@ -19,16 +29,46 @@ function LoginPage() {
         .required("Required"),
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      navigate("/home");
+      login(values);
     },
   });
 
+  const login = async (data) => {
+    try {
+      const response = await SignIn(data);
+      if (response.status !== 200) {
+        handleOpen();
+        setAlert((value) => ({
+          ...value,
+          isError: true,
+          message: response.data,
+        }));
+        return;
+      }
+
+      handleOpen();
+      setAlert((value) => ({
+        ...value,
+        isError: false,
+        message: "Login successfully",
+      }));
+
+      navigate("/home");
+    } catch (e) {
+      handleOpen();
+      setAlert((value) => ({
+        ...value,
+        isError: true,
+        message: "Internal server error",
+      }));
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="lg:p-12 border-2 space-y-8 rounded-xl lg:backdrop-blur-sm lg:w-[400px]">
+    <div className="authentication flex items-center justify-center min-h-screen">
+      <div className="p-8 md:p-12 border-2 space-y-8 rounded-none md:rounded-xl backdrop-blur-sm w-screen md:w-[400px] h-screen md:h-fit">
         <div className="space-y-2">
-          <h1 className="text-4xl text-white text-center">Welcome Back</h1>
+          <h1 className="text-2xl md:text-4xl text-white text-center">Welcome Back</h1>
           <h5 className="text-white text-sm text-center">
             Please login to access your account
           </h5>
@@ -73,6 +113,12 @@ function LoginPage() {
           </a>
         </div>
       </div>
+      <AlertComp
+        open={open}
+        handleOpen={handleOpen}
+        message={alert.message}
+        isError={alert.isError}
+      />
     </div>
   );
 }

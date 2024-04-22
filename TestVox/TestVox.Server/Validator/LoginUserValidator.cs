@@ -8,7 +8,7 @@ namespace TestVox.Server.Validator
         public LoginUserValidator()
         {
             RuleFor(request => request.email).NotNull().NotEmpty().EmailAddress();
-            RuleFor(request => request.password).NotNull().NotEmpty();
+            RuleFor(request => request.password).MinimumLength(6).NotNull().NotEmpty();
         }
     }
 }

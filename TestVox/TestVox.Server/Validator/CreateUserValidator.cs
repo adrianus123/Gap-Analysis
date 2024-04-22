@@ -10,8 +10,8 @@ namespace TestVox.Server.Validator
             RuleFor(user => user.firstName).NotNull().NotEmpty();
             RuleFor(user => user.lastName).NotNull().NotEmpty();
             RuleFor(user => user.email).NotNull().NotEmpty().EmailAddress();
-            RuleFor(user => user.password).NotNull().NotEmpty();
-            RuleFor(user => user.repeatPassword).NotNull().NotEmpty().Equal(user => user.password);
+            RuleFor(user => user.password).MinimumLength(6).NotNull().NotEmpty();
+            RuleFor(user => user.repeatPassword).MinimumLength(6).NotNull().NotEmpty().Equal(user => user.password);
         }
     }
 }

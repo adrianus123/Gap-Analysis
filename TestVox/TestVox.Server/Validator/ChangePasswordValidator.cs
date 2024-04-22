@@ -7,9 +7,9 @@ namespace TestVox.Server.Validator
     {
         public ChangePasswordValidator()
         {
-            RuleFor(request => request.oldPassword).NotNull().NotEmpty();
-            RuleFor(request => request.newPassword).NotNull().NotEmpty();
-            RuleFor(request => request.repeatPassword).NotNull().NotEmpty().Equal(request => request.newPassword);
+            RuleFor(request => request.oldPassword).MinimumLength(6).NotNull().NotEmpty();
+            RuleFor(request => request.newPassword).MinimumLength(6).NotNull().NotEmpty();
+            RuleFor(request => request.repeatPassword).MinimumLength(6).NotNull().NotEmpty().Equal(request => request.newPassword);
         }
     }
 }
