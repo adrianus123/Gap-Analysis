@@ -15,14 +15,15 @@ import { IoIosArrowDown, IoIosMenu } from "react-icons/io";
 import { HiXMark } from "react-icons/hi2";
 import { TiUserDelete } from "react-icons/ti";
 import { PiSignOut } from "react-icons/pi";
-import { FaLock, FaUserEdit } from "react-icons/fa";
+import { FaLock, FaUserEdit, FaUserCircle } from "react-icons/fa";
 import ChangePasswordModal from "../components/modal/ChangePasswordModal";
 import UpdateUserModal from "../components/modal/UpdateUserModal";
 import { useNavigate } from "react-router-dom";
-import { DeleteAccount, SignOut } from "../apis";
+import { DeleteAccount, GetUser, SignOut } from "../apis";
 import ConfirmDeleteModal from "../components/modal/ConfirmDeleteModal";
 
 function NavListMenu() {
+  const [user, setUser] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -36,8 +37,7 @@ function NavListMenu() {
   const handleChange = () => setOpenChange(!openChange);
   const handleOpenDelete = () => setOpenConfirmDelete(!openConfirmDelete);
   const handleDelete = async () => {
-    const response = await DeleteAccount();
-    console.log(response);
+    await DeleteAccount();
     handleSignOut();
   };
   const handleSignOut = () => {
@@ -45,48 +45,51 @@ function NavListMenu() {
     navigate("/sign-in");
   };
 
+  useEffect(() => {
+    GetUser()
+      .then((res) => setUser(res))
+      .catch((err) => console.error(err));
+  }, []);
+
   const renderItems = (
     <>
+      <Typography as="div" className="m-2 rounded-md bg-gray-200 p-2 flex items-center gap-2">
+        <FaUserCircle className="h-12 w-12" />
+        <Typography as="div">
+        <Typography variant="lead">
+          {user?.firstName || ""} {user?.lastName || ""}
+        </Typography>
+        <Typography variant="small">{user?.email || ""}</Typography>
+        </Typography>
+      </Typography>
       <MenuItem onClick={handleUpdate}>
         <div className="flex items-center gap-2">
-          <FaUserEdit strokeWidth={2} className="h-6 text-gray-900 w-6" />
-          <Typography
-          className="text-sm"
-            color="blue-gray"
-          >
+          <FaUserEdit strokeWidth={2} className="h-4 text-gray-900 w-4" />
+          <Typography className="text-sm" color="blue-gray">
             Update Profile
           </Typography>
         </div>
       </MenuItem>
       <MenuItem onClick={handleChange}>
         <div className="flex items-center gap-2">
-          <FaLock strokeWidth={2} className="h-6 text-gray-900 w-6" />
-          <Typography
-          className="text-sm"
-            color="blue-gray"
-          >
+          <FaLock strokeWidth={2} className="h-4 text-gray-900 w-4" />
+          <Typography className="text-sm" color="blue-gray">
             Change Password
           </Typography>
         </div>
       </MenuItem>
       <MenuItem onClick={handleOpenDelete}>
         <div className="flex items-center gap-2">
-          <TiUserDelete strokeWidth={2} className="h-6 text-gray-900 w-6" />
-          <Typography
-          className="text-sm"
-            color="blue-gray"
-          >
+          <TiUserDelete strokeWidth={2} className="h-4 text-gray-900 w-4" />
+          <Typography className="text-sm" color="blue-gray">
             Delete Account
           </Typography>
         </div>
       </MenuItem>
       <MenuItem onClick={handleSignOut}>
         <div className="flex items-center gap-2">
-          <PiSignOut strokeWidth={2} className="h-6 text-gray-900 w-6" />
-          <Typography
-          className="text-sm"
-            color="blue-gray"
-          >
+          <PiSignOut strokeWidth={2} className="h-4 text-gray-900 w-4" />
+          <Typography className="text-sm" color="blue-gray">
             Sign Out
           </Typography>
         </div>

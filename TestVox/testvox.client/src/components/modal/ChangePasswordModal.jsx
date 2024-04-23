@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -14,8 +14,17 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { ChangePassword } from "../../apis";
 import PropTypes from "prop-types";
+import AlertComp from "../AlertComp";
 
 const ChangePasswordModal = ({ open, handleOpen }) => {
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alert, setAlert] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const handleOpenAlert = () => setOpenAlert(!openAlert);
+
   const formik = useFormik({
     initialValues: {
       oldPassword: "",
@@ -39,88 +48,115 @@ const ChangePasswordModal = ({ open, handleOpen }) => {
     }),
     onSubmit: (values) => {
       changePassword(values);
+      handleOpen();
     },
   });
 
   const changePassword = async (data) => {
     const response = await ChangePassword(data);
-    console.log(response);
+
+    handleOpenAlert();
+    if (response.status !== 200) {
+      console.log(response);
+      setAlert((values) => ({
+        isError: true,
+        message: response.data.result,
+      }));
+
+      return;
+    }
+
+    setAlert((values) => ({
+      isError: false,
+      message: "Success",
+    }));
   };
 
   return (
-    <Dialog
-      size="xs"
-      open={open}
-      handler={handleOpen}
-      className="bg-transparent shadow-none"
-    >
-      <Card className="mx-auto w-full max-w-[24rem]">
-        <CardBody className="flex flex-col gap-4">
-          <div className="relative">
-            <Typography variant="h4" color="blue-gray">
-              Change Password
-            </Typography>
-            <IconButton
-              className="!absolute right-[-20px] top-[-20px]"
-              onClick={handleOpen}
-              variant="text"
+    <>
+      <Dialog
+        size="xs"
+        open={open}
+        handler={handleOpen}
+        className="bg-transparent shadow-none"
+      >
+        <Card className="mx-auto w-full max-w-[24rem]">
+          <CardBody className="flex flex-col gap-4">
+            <div className="relative">
+              <Typography variant="h4" color="blue-gray">
+                Change Password
+              </Typography>
+              <IconButton
+                className="!absolute right-[-20px] top-[-20px]"
+                onClick={handleOpen}
+                variant="text"
+              >
+                <IoIosCloseCircleOutline className="text-xl" />
+              </IconButton>
+            </div>
+            <form
+              id="change_password_form"
+              onSubmit={formik.handleSubmit}
+              className="space-y-4"
             >
-              <IoIosCloseCircleOutline className="text-xl" />
-            </IconButton>
-          </div>
-          <form
-            id="change_password_form"
-            onSubmit={formik.handleSubmit}
-            className="space-y-4"
-          >
-            <PasswordInputComp
-              id="oldPassword"
-              name="Old Password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.oldPassword}
-              isError={
-                formik.touched.oldPassword && formik.errors.oldPassword != null
-              }
-              errorMessage={formik.errors.oldPassword}
-            />
-            <PasswordInputComp
-              id="newPassword"
-              name="New Password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.newPassword}
-              isError={
-                formik.touched.newPassword && formik.errors.newPassword != null
-              }
-              errorMessage={formik.errors.newPassword}
-            />
-            <PasswordInputComp
-              id="repeatPassword"
-              name="Confirm Password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.repeatPassword}
-              isError={
-                formik.touched.repeatPassword &&
-                formik.errors.repeatPassword != null
-              }
-              errorMessage={formik.errors.repeatPassword}
-            />
-          </form>
-        </CardBody>
-        <CardFooter className="pt-0">
-          <Button
-            type="submit"
-            form="change_password_form"
-            variant="gradient"
-            fullWidth
-          >
-            Save
-          </Button>
-        </CardFooter>
-      </Card>
-    </Dialog>
+              <PasswordInputComp
+                id="oldPassword"
+                name="Old Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.oldPassword}
+                isError={
+                  formik.touched.oldPassword &&
+                  formik.errors.oldPassword != null
+                }
+                errorMessage={formik.errors.oldPassword}
+              />
+              <PasswordInputComp
+                id="newPassword"
+                name="New Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.newPassword}
+                isError={
+                  formik.touched.newPassword &&
+                  formik.errors.newPassword != null
+                }
+                errorMessage={formik.errors.newPassword}
+              />
+              <PasswordInputComp
+                id="repeatPassword"
+                name="Confirm Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.repeatPassword}
+                isError={
+                  formik.touched.repeatPassword &&
+                  formik.errors.repeatPassword != null
+                }
+                errorMessage={formik.errors.repeatPassword}
+              />
+            </form>
+          </CardBody>
+          <CardFooter className="pt-0">
+            <Button
+              type="submit"
+              form="change_password_form"
+              variant="gradient"
+              fullWidth
+            >
+              Save
+            </Button>
+          </CardFooter>
+        </Card>
+      </Dialog>
+
+      <AlertComp
+        open={openAlert}
+        handleOpen={handleOpenAlert}
+        isError={alert.isError}
+        message={alert.message}
+      />
+    </>
   );
 };
 

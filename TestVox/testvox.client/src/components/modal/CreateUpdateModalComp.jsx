@@ -45,6 +45,7 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
 
   const formik = useFormik({
     initialValues: formValues,
+    enableReinitialize: true,
     validationSchema: Yup.object({
       organizerName: Yup.string().required("Required"),
       imageLocation: Yup.string()
@@ -71,7 +72,6 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
       return;
     }
 
-    console.log(response);
     setAlert((value) => ({
       isError: false,
       message: "Success",

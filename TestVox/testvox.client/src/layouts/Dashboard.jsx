@@ -36,7 +36,7 @@ function Dashboard() {
       ) : (
         <div className="space-y-4">
           <div className="flex justify-between items-center bg-white p-4 rounded shadow-md">
-            <Typography variant="h2" className="text-xl md:text-4xl">
+            <Typography variant="h2" className="text-xl md:text-4xl text-gray-900">
               Organizers
             </Typography>
             <Button
