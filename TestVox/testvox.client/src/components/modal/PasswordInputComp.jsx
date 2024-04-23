@@ -1,6 +1,7 @@
 import { IconButton, Input, Typography } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import PropTypes from 'prop-types';
 
 const PasswordInputComp = ({ name, isError, errorMessage, ...props }) => {
   const [open, setOpen] = useState(false);
@@ -53,5 +54,11 @@ const PasswordInputComp = ({ name, isError, errorMessage, ...props }) => {
     </div>
   );
 };
+
+PasswordInputComp.propTypes = {
+  name: PropTypes.string.isRequired,
+  isError: PropTypes.bool,
+  errorMessage: PropTypes.string
+}
 
 export default PasswordInputComp;

@@ -12,6 +12,7 @@ import CreateUpdateModalComp from "./modal/CreateUpdateModalComp";
 import DetailModalComp from "./modal/DetailModalComp";
 import ConfirmDeleteModal from "./modal/ConfirmDeleteModal";
 import { DeleteOrganizer } from "../apis";
+import PropTypes from "prop-types";
 
 function CardComp({ id, name, imageUrl }) {
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
@@ -40,11 +41,15 @@ function CardComp({ id, name, imageUrl }) {
         <img src={imageUrl} alt={name} />
       </CardHeader>
       <CardBody>
-        <Typography variant="h5" color="blue-gray" className="text-center text-xs md:text-lg">
+        <Typography
+          variant="h5"
+          color="blue-gray"
+          className="text-center text-xs md:text-lg"
+        >
           {name}
         </Typography>
       </CardBody>
-      <div className="absolute h-full w-full bg-black/70 flex flex-col md:flex-row items-center justify-evenly -bottom-10 group-hover:bottom-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+      <div className="absolute h-full w-full bg-black/70 flex flex-col lg:flex-row items-center justify-evenly -bottom-10 group-hover:bottom-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
         <Button
           onClick={handleModalDetail}
           variant="text"
@@ -92,5 +97,11 @@ function CardComp({ id, name, imageUrl }) {
     </Card>
   );
 }
+
+CardComp.propTypes = {
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
+};
 
 export default CardComp;

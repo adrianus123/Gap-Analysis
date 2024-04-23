@@ -7,6 +7,10 @@ const SECRET_KEY = "unfhJsNEL050DV845QfIXs6tjmQyEIqo";
 
 export const GetToken = () => {
   const encryptedToken = localStorage.getItem("token");
+  if (!encryptedToken) {
+    return null;
+  }
+
   const decryptedToken = CryptoJS.AES.decrypt(
     encryptedToken,
     SECRET_KEY

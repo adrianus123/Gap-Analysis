@@ -1,4 +1,5 @@
 import { Input, Typography } from "@material-tailwind/react";
+import PropTypes from "prop-types";
 
 function InputTextComp({ id, type, name, isError, errorMessage, ...props }) {
   return (
@@ -20,5 +21,13 @@ function InputTextComp({ id, type, name, isError, errorMessage, ...props }) {
     </div>
   );
 }
+
+InputTextComp.propTypes = {
+  id: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  isError: PropTypes.bool,
+  errorMessage: PropTypes.string,
+};
 
 export default InputTextComp;

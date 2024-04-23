@@ -1,6 +1,7 @@
 import { IconButton, Input, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import PropTypes from "prop-types";
 
 function InputTextComp({ id, name, isError, errorMessage, ...props }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,5 +50,12 @@ function InputTextComp({ id, name, isError, errorMessage, ...props }) {
     </div>
   );
 }
+
+InputTextComp.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  isError: PropTypes.bool,
+  errorMessage: PropTypes.string,
+};
 
 export default InputTextComp;

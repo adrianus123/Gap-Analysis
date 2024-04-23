@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { GoAlertFill } from "react-icons/go";
+import PropTypes from "prop-types";
 
 const ConfirmDeleteModal = ({ open, handleOpen, action, isAccount }) => {
   return (
@@ -36,6 +37,13 @@ const ConfirmDeleteModal = ({ open, handleOpen, action, isAccount }) => {
       </DialogFooter>
     </Dialog>
   );
+};
+
+ConfirmDeleteModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleOpen: PropTypes.func.isRequired,
+  action: PropTypes.func.isRequired,
+  isAccount: PropTypes.bool.isRequired,
 };
 
 export default ConfirmDeleteModal;

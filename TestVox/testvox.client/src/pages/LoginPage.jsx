@@ -68,7 +68,9 @@ function LoginPage() {
     <div className="authentication flex items-center justify-center min-h-screen">
       <div className="p-8 md:p-12 border-2 space-y-8 rounded-none md:rounded-xl backdrop-blur-sm w-screen md:w-[400px] h-screen md:h-fit">
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-4xl text-white text-center">Welcome Back</h1>
+          <h1 className="text-2xl md:text-4xl text-white text-center">
+            Welcome Back
+          </h1>
           <h5 className="text-white text-sm text-center">
             Please login to access your account
           </h5>
@@ -82,7 +84,7 @@ function LoginPage() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.email}
-            isError={formik.touched.email && formik.errors.email}
+            isError={formik.touched.email && formik.errors.email != null}
             errorMessage={formik.errors.email}
           />
           <InputPasswordComp
@@ -91,7 +93,7 @@ function LoginPage() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.password}
-            isError={formik.touched.password && formik.errors.password}
+            isError={formik.touched.password && formik.errors.password != null}
             errorMessage={formik.errors.password}
           />
           <div>

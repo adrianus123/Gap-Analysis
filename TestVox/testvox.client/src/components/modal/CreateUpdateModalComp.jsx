@@ -14,11 +14,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { CreateOrganizer, GetOrganizer, UpdateOrganizer } from "../../apis";
 import AlertComp from "../AlertComp";
+import PropTypes from "prop-types";
 
-const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen, action }) => {
+const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
   const [openAlert, setOpenAlert] = useState(false);
   const [alert, setAlert] = useState({
-    isError: "",
+    isError: false,
     message: "",
   });
 
@@ -112,7 +113,8 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen, action }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.organizerName}
                 isError={
-                  formik.touched.organizerName && formik.errors.organizerName
+                  formik.touched.organizerName &&
+                  formik.errors.organizerName != null
                 }
                 errorMessage={formik.errors.organizerName}
               />
@@ -124,34 +126,36 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen, action }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.imageLocation}
                 isError={
-                  formik.touched.imageLocation && formik.errors.imageLocation
+                  formik.touched.imageLocation &&
+                  formik.errors.imageLocation != null
                 }
                 errorMessage={formik.errors.imageLocation}
               />
             </form>
           </CardBody>
           <CardFooter className="pt-0">
-            <Button
-              type="submit"
-              variant="gradient"
-              form="form"
-              onClick={action}
-              fullWidth
-            >
+            <Button type="submit" variant="gradient" form="form" fullWidth>
               {isUpdate ? "Update" : "Create"}
             </Button>
           </CardFooter>
         </Card>
       </Dialog>
 
-      {/* <AlertComp
+      <AlertComp
         open={openAlert}
         handleOpen={handleOpenAlert}
         isError={alert.isError}
         message={alert.message}
-      /> */}
+      />
     </>
   );
+};
+
+CreateUpdateModalComp.propTypes = {
+  id: PropTypes.number,
+  isUpdate: PropTypes.bool.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleOpen: PropTypes.func.isRequired,
 };
 
 export default CreateUpdateModalComp;

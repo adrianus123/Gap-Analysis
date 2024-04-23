@@ -7,6 +7,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import PropTypes from "prop-types";
 
 const DetailModalComp = ({ open, handleOpen, name, imageUrl }) => {
   return (
@@ -28,6 +29,13 @@ const DetailModalComp = ({ open, handleOpen, name, imageUrl }) => {
       </DialogBody>
     </Dialog>
   );
+};
+
+DetailModalComp.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleOpen: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
 };
 
 export default DetailModalComp;

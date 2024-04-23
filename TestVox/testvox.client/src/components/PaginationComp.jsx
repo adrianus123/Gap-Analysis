@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, ButtonGroup, IconButton } from "@material-tailwind/react";
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
+import PropTypes from "prop-types";
 
 function PaginationComp({ active, setActive, size, setSize, totalPages }) {
   const pagesToShow = [1];
@@ -39,7 +40,7 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
           <Button
             onClick={() => handleSize(10)}
             className={
-              size === 10 ? "bg-black text-white hover:text-black" : ""
+              size === 10 ? "bg-gray-900 text-white hover:text-black" : ""
             }
           >
             10
@@ -47,7 +48,7 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
           <Button
             onClick={() => handleSize(20)}
             className={
-              size === 20 ? "bg-black text-white hover:text-black" : ""
+              size === 20 ? "bg-gray-900 text-white hover:text-black" : ""
             }
           >
             20
@@ -55,7 +56,7 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
           <Button
             onClick={() => handleSize(50)}
             className={
-              size === 50 ? "bg-black text-white hover:text-black" : ""
+              size === 50 ? "bg-gray-900 text-white hover:text-black" : ""
             }
           >
             50
@@ -69,7 +70,7 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
           onClick={prev}
           disabled={active === 1}
         >
-          <IoIosArrowRoundBack strokeWidth={2} className="h-4 w-4" /> 
+          <IoIosArrowRoundBack strokeWidth={2} className="h-4 w-4" />
           <span className="hidden md:block">Previous</span>
         </Button>
         <div className="flex items-center gap-2">
@@ -92,5 +93,13 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
     </div>
   );
 }
+
+PaginationComp.propTypes = {
+  active: PropTypes.number.isRequired,
+  setActive: PropTypes.func.isRequired,
+  size: PropTypes.number.isRequired,
+  setSize: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+};
 
 export default PaginationComp;

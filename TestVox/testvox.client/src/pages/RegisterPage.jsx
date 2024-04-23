@@ -80,7 +80,9 @@ function RegisterPage() {
     <div className="authentication flex items-center justify-center min-h-screen">
       <div className="p-8 md:p-12 border-2 space-y-8 rounded-none md:rounded-xl backdrop-blur-sm w-screen md:w-fit h-screen md:h-fit">
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-4xl text-white text-center">Create Account</h1>
+          <h1 className="text-2xl md:text-4xl text-white text-center">
+            Create Account
+          </h1>
           <h5 className="text-white text-sm text-center">
             Enter your details to register
           </h5>
@@ -95,7 +97,9 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.firstName}
-              isError={formik.touched.firstName && formik.errors.firstName}
+              isError={
+                formik.touched.firstName && formik.errors.firstName != null
+              }
               errorMessage={formik.errors.firstName}
             />
             <InputTextComp
@@ -105,7 +109,9 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.lastName}
-              isError={formik.touched.lastName && formik.errors.lastName}
+              isError={
+                formik.touched.lastName && formik.errors.lastName != null
+              }
               errorMessage={formik.errors.lastName}
             />
           </div>
@@ -116,7 +122,7 @@ function RegisterPage() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.email}
-            isError={formik.touched.email && formik.errors.email}
+            isError={formik.touched.email && formik.errors.email != null}
             errorMessage={formik.errors.email}
           />
           <InputPasswordComp
@@ -125,7 +131,7 @@ function RegisterPage() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.password}
-            isError={formik.touched.password && formik.errors.password}
+            isError={formik.touched.password && formik.errors.password != null}
             errorMessage={formik.errors.password}
           />
           <InputPasswordComp
@@ -135,7 +141,8 @@ function RegisterPage() {
             onBlur={formik.handleBlur}
             value={formik.values.repeatPassword}
             isError={
-              formik.touched.repeatPassword && formik.errors.repeatPassword
+              formik.touched.repeatPassword &&
+              formik.errors.repeatPassword != null
             }
             errorMessage={formik.errors.repeatPassword}
           />
