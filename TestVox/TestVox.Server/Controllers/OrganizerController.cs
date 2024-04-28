@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Net;
 using TestVox.Server.Data;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Text;
 using TestVox.Server.Validator;
 using FluentValidation.Results;
+using TestVox.Server.Config.Interfaces;
+using TestVox.Server.Data.Response;
 
 namespace TestVox.Server.Controllers
 {
@@ -17,19 +17,22 @@ namespace TestVox.Server.Controllers
     public class OrganizerController : ControllerBase
     {
         private readonly ILogger<OrganizerController> _logger;
-        private readonly IHttpClientFactory _clientFactory;
-        public OrganizerController(ILogger<OrganizerController> logger, IHttpClientFactory clientFactory)
+        private readonly IHttpClientFactoryWrapper _clientFactory;
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        public OrganizerController(ILogger<OrganizerController> logger, IHttpClientFactoryWrapper clientFactory, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _clientFactory = clientFactory;
+            _contextAccessor = contextAccessor;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllOrganizers([FromQuery] int page, [FromQuery] int perPage)
+        public async Task<IActionResult> GetAllOrganizers([FromQuery] int page = 1, [FromQuery] int perPage = 10)
         {
             _logger.LogInformation("Received get organizers request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _contextAccessor.HttpContext.Items["token"] as string;
 
             if (token.IsNullOrEmpty())
             {
@@ -44,7 +47,8 @@ namespace TestVox.Server.Controllers
             {
                 _logger.LogInformation("Success fetch organizers data");
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<OrganizerList>(responseData);
+                return Ok(result);
             }
             else
             {
@@ -58,7 +62,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received get organizer request, id " + id);
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _contextAccessor.HttpContext.Items["token"] as string;
 
             if (token.IsNullOrEmpty())
             {
@@ -72,8 +76,10 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Success fetch organizer data, id " + id);
+
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<Organizer>(responseData);
+                return Ok(result);
             }
             else
             {
@@ -87,7 +93,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received create organizer request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _contextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
@@ -117,12 +123,15 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Organizer created successfully.");
+
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<Organizer>(responseData);
+                return Ok(result);
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -132,7 +141,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received update organizer request, id " + id);
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _contextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
@@ -162,12 +171,16 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Organizer updated successfully.");
-                var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+
+                //var responseData = await response.Content.ReadAsStringAsync();
+                //return Ok(responseData);
+
+                return NoContent();
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -177,7 +190,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received delete organizer request, id " + id);
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _contextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
@@ -190,12 +203,16 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Organizer deleted successfully.");
-                var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+
+                //var responseData = await response.Content.ReadAsStringAsync();
+                //return Ok(responseData);
+
+                return NoContent();
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }

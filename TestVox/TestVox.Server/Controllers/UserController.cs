@@ -1,12 +1,13 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using TestVox.Server.Config.Interfaces;
 using TestVox.Server.Data;
+using TestVox.Server.Data.Response;
 using TestVox.Server.Validator;
 
 namespace TestVox.Server.Controllers
@@ -16,12 +17,14 @@ namespace TestVox.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpClientFactoryWrapper _clientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserController(ILogger<UserController> logger, IHttpClientFactory clientFactory)
+        public UserController(ILogger<UserController> logger, IHttpClientFactoryWrapper clientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _clientFactory = clientFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost("sign-up")]
@@ -51,12 +54,15 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("User created successfully.");
+
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<User>(responseData);
+                return Ok(result);
             }
             else
             {
                 _logger.LogError("Error: " + response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, "Failed to create user");
             }
         }
@@ -88,12 +94,15 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("User login successfully.");
+
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<SignIn>(responseData);
+                return Ok(result);
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, "Email or password is incorrect");
             }
         }
@@ -103,7 +112,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received get user request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = (string)_httpContextAccessor.HttpContext.Items["token"];
 
             if (token.IsNullOrEmpty())
             {
@@ -118,7 +127,8 @@ namespace TestVox.Server.Controllers
             {
                 _logger.LogInformation("Success load data user id " + id);
                 var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<User>(responseData);
+                return Ok(result);
             }
             else
             {
@@ -132,7 +142,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received update user data request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _httpContextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
@@ -161,12 +171,13 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Update user data successfully.");
-                var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+
+                return NoContent();
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -176,7 +187,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received change password request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _httpContextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.BadRequest, "Token is required!");
@@ -205,12 +216,13 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Change password successfully");
-                var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+
+                return NoContent();
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }
@@ -220,7 +232,7 @@ namespace TestVox.Server.Controllers
         {
             _logger.LogInformation("Received detele user request.");
 
-            var token = HttpContext.Request.Headers.Authorization;
+            var token = _httpContextAccessor.HttpContext.Items["token"] as string;
             if (token.IsNullOrEmpty())
             {
                 return StatusCode((int)HttpStatusCode.Unauthorized, "Token is required!");
@@ -234,12 +246,13 @@ namespace TestVox.Server.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Delete user successfullly.");
-                var responseData = await response.Content.ReadAsStringAsync();
-                return Ok(responseData);
+
+                return NoContent();
             }
             else
             {
                 _logger.LogError(response.Content.ReadAsStringAsync().Result);
+
                 return StatusCode((int)response.StatusCode, response.Content.ReadAsStringAsync());
             }
         }

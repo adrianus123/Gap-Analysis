@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVox.Server", "TestVox.Server\TestVox.Server.csproj", "{AAF99E00-DA6C-4A22-B9BE-C9778C2DA02D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestVox.Server", "TestVox.Server\TestVox.Server.csproj", "{AAF99E00-DA6C-4A22-B9BE-C9778C2DA02D}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "testvox.client", "testvox.client\testvox.client.esproj", "{4F0EC56C-F4AA-411D-A418-C3FB497A1447}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVox.Server.Tests", "TestVox.Server.Tests\TestVox.Server.Tests.csproj", "{07F04420-2DD7-4CB4-BB7F-45DB2C4031CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{4F0EC56C-F4AA-411D-A418-C3FB497A1447}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F0EC56C-F4AA-411D-A418-C3FB497A1447}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F0EC56C-F4AA-411D-A418-C3FB497A1447}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{07F04420-2DD7-4CB4-BB7F-45DB2C4031CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F04420-2DD7-4CB4-BB7F-45DB2C4031CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F04420-2DD7-4CB4-BB7F-45DB2C4031CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F04420-2DD7-4CB4-BB7F-45DB2C4031CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
