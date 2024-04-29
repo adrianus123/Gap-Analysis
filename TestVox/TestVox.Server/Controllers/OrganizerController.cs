@@ -47,8 +47,8 @@ namespace TestVox.Server.Controllers
             {
                 _logger.LogInformation("Success fetch organizers data");
                 var responseData = await response.Content.ReadAsStringAsync();
-                //var result = JsonConvert.DeserializeObject<OrganizerList>(responseData);
-                return Ok(responseData);
+                var result = JsonConvert.DeserializeObject<OrganizerList>(responseData);
+                return Ok(result);
             }
             else
             {

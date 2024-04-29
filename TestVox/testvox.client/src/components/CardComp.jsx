@@ -35,7 +35,6 @@ function CardComp({ id, name, imageUrl }) {
 
   const deleteOrganizer = async (id) => {
     const response = await DeleteOrganizer(id);
-    console.log(response);
 
     handleModalDelete();
     handleOpenAlert();

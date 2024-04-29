@@ -32,6 +32,7 @@ namespace TestVox.Server.Tests.Controllers
         [Fact]
         public async Task OrganizerController_GetAllOrganizers_ReturnOk()
         {
+            //Arrange
             var page = 1;
             var perPage = 3;
             var organizerList = new List<Organizer>();
@@ -63,12 +64,12 @@ namespace TestVox.Server.Tests.Controllers
             result.Should().BeOfType(typeof(OkObjectResult));
 
             var okResult = (OkObjectResult)result;
+
+            var organizerListResult = okResult.Value as OrganizerList;
+
             Assert.Equal((int)HttpStatusCode.OK, okResult.StatusCode);
-
-            var organizerListResult = okResult.Value;
-
-            //Assert.Equal(organizerList.Count(), organizerListResult.Count());
-            //Assert.Equal(organizerList.First().id, organizerListResult.data.First().id);
+            Assert.Equal(organizerList.Count(), organizerListResult.data.Count());
+            Assert.Equal(organizerList.First().id, organizerListResult.data.First().id);
         }
 
         [Fact]
@@ -115,6 +116,7 @@ namespace TestVox.Server.Tests.Controllers
         [Fact]
         public async Task OrganizerController_CreateOrganizer_ReturnOk()
         {
+            //Arrange
             var request = new OrganizerRequest { organizerName = "Organizer Test", imageLocation = "image_url" };
             var organizer = new Organizer { id = 1, organizerName = "Organizer Test", imageLocation = "image_url" };
             var responseData = JsonConvert.SerializeObject(organizer);
@@ -149,6 +151,7 @@ namespace TestVox.Server.Tests.Controllers
         [Fact]
         public async Task OrganizerController_UpdateOrganizer_ReturnOk()
         {
+            //Arrange
             var organizerId = 1;
             var request = new OrganizerRequest { organizerName = "Updated Organizer", imageLocation = "new_image_url" };
             var responseMessage = new HttpResponseMessage(HttpStatusCode.NoContent);
