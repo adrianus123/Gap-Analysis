@@ -56,7 +56,7 @@ const ChangePasswordModal = ({ open, handleOpen }) => {
     const response = await ChangePassword(data);
 
     handleOpenAlert();
-    if (response.status !== 200) {
+    if (response.status !== 204) {
       console.log(response);
       setAlert((values) => ({
         isError: true,

@@ -1,11 +1,12 @@
 import { MdOutlineAddCircleOutline } from "react-icons/md";
 import PaginationComp from "../components/PaginationComp";
 import CardComp from "../components/CardComp";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GetOrganizers } from "../apis";
 import { Button, Typography } from "@material-tailwind/react";
 import CreateUpdateModalComp from "../components/modal/CreateUpdateModalComp";
 import SpinnerComp from "../components/SpinnerComp";
+import apiContext from "../apis/context";
 
 function Dashboard() {
   const [data, setData] = useState([]);
@@ -24,10 +25,14 @@ function Dashboard() {
   };
 
   const handleOpen = () => setOpenModal(!openModal);
+  const {isRefresh, handleRefresh} = useContext(apiContext);
 
   useEffect(() => {
-    getData(active, size);
-  }, [active, size]);
+    if (isRefresh) {
+      getData(active, size);
+      handleRefresh();
+    }
+  }, [active, size, isRefresh]);
 
   return (
     <>

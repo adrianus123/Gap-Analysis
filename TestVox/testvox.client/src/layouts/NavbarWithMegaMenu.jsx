@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Navbar,
   Collapse,
@@ -21,6 +21,7 @@ import UpdateUserModal from "../components/modal/UpdateUserModal";
 import { useNavigate } from "react-router-dom";
 import { DeleteAccount, GetUser, SignOut } from "../apis";
 import ConfirmDeleteModal from "../components/modal/ConfirmDeleteModal";
+import apiContext from "../apis/context";
 
 function NavListMenu() {
   const [user, setUser] = useState([]);
@@ -32,6 +33,7 @@ function NavListMenu() {
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
   const navigate = useNavigate();
+  const { getUser, handleGetUser } = useContext(apiContext);
 
   const handleUpdate = () => setOpenUpdate(!openUpdate);
   const handleChange = () => setOpenChange(!openChange);
@@ -46,20 +48,29 @@ function NavListMenu() {
   };
 
   useEffect(() => {
-    GetUser()
-      .then((res) => setUser(res))
-      .catch((err) => console.error(err));
-  }, []);
+    if (getUser) {
+      GetUser()
+        .then((res) => {
+          setUser(res);
+        })
+        .catch((err) => console.error(err));
+
+      handleGetUser();
+    }
+  }, [getUser]);
 
   const renderItems = (
     <>
-      <Typography as="div" className="m-2 rounded-md bg-gray-200 p-2 flex items-center gap-2">
+      <Typography
+        as="div"
+        className="m-2 rounded-md bg-gray-200 p-2 flex items-center gap-2"
+      >
         <FaUserCircle className="h-12 w-12" />
         <Typography as="div">
-        <Typography variant="lead">
-          {user?.firstName || ""} {user?.lastName || ""}
-        </Typography>
-        <Typography variant="small">{user?.email || ""}</Typography>
+          <Typography variant="lead">
+            {user?.firstName || ""} {user?.lastName || ""}
+          </Typography>
+          <Typography variant="small">{user?.email || ""}</Typography>
         </Typography>
       </Typography>
       <MenuItem onClick={handleUpdate}>

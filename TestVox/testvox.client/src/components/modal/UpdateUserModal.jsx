@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { GetUser, UpdateProfile } from "../../apis";
 import PropTypes from "prop-types";
 import AlertComp from "../AlertComp";
+import apiContext from "../../apis/context";
 
 const UpdateUserModal = ({ open, handleOpen }) => {
   const [openAlert, setOpenAlert] = useState(false);
@@ -30,6 +31,7 @@ const UpdateUserModal = ({ open, handleOpen }) => {
   });
 
   const handleOpenAlert = () => setOpenAlert(!openAlert);
+  const { handleGetUser } = useContext(apiContext);
 
   useEffect(() => {
     GetUser()
@@ -55,9 +57,9 @@ const UpdateUserModal = ({ open, handleOpen }) => {
 
   const updateProfile = async (data) => {
     const response = await UpdateProfile(data);
-    
+
     handleOpenAlert();
-    if (response.status !== 200) {
+    if (response.status !== 204) {
       setAlert((values) => ({
         isError: true,
         message: response.data,
@@ -70,6 +72,8 @@ const UpdateUserModal = ({ open, handleOpen }) => {
       isError: false,
       message: "Success",
     }));
+
+    handleGetUser();
   };
 
   return (

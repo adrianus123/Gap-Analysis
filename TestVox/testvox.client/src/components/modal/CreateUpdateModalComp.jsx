@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { CreateOrganizer, GetOrganizer, UpdateOrganizer } from "../../apis";
 import AlertComp from "../AlertComp";
 import PropTypes from "prop-types";
+import apiContext from "../../apis/context";
 
 const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
   const [openAlert, setOpenAlert] = useState(false);
@@ -28,6 +29,7 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
     imageLocation: "",
   });
 
+  const {handleRefresh} = useContext(apiContext);
   const handleOpenAlert = () => setOpenAlert(!openAlert);
 
   useEffect(() => {
@@ -64,7 +66,7 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
       : CreateOrganizer(data));
 
     handleOpenAlert();
-    if (response.status !== 200) {
+    if (isUpdate ? response.status !== 204 : response.status !== 200) {
       setAlert((value) => ({
         isError: true,
         message: response.data,
@@ -76,6 +78,8 @@ const CreateUpdateModalComp = ({ id, isUpdate, open, handleOpen }) => {
       isError: false,
       message: "Success",
     }));
+
+    handleRefresh();
   };
 
   return (

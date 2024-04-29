@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, ButtonGroup, IconButton } from "@material-tailwind/react";
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
 import PropTypes from "prop-types";
+import apiContext from "../apis/context";
 
 function PaginationComp({ active, setActive, size, setSize, totalPages }) {
+  const { handleRefresh } = useContext(apiContext);
+
   const pagesToShow = [1];
   for (let i = active - 2; i <= active + 2; i++) {
     if (i > 1 && i < totalPages) {
@@ -15,22 +18,30 @@ function PaginationComp({ active, setActive, size, setSize, totalPages }) {
   const getItemProps = (index) => ({
     variant: active === index ? "filled" : "text",
     color: "gray",
-    onClick: () => setActive(index),
+    onClick: () => {
+      setActive(index);
+      handleRefresh();
+    },
   });
 
   const next = () => {
     if (active === totalPages) return;
 
     setActive(active + 1);
+    handleRefresh();
   };
 
   const prev = () => {
     if (active === 1) return;
 
     setActive(active - 1);
+    handleRefresh();
   };
 
-  const handleSize = (value) => setSize(value);
+  const handleSize = (value) => {
+    setSize(value);
+    handleRefresh();
+  };
 
   return (
     <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between items-center p-4 rounded-md shadow-md bg-white">
