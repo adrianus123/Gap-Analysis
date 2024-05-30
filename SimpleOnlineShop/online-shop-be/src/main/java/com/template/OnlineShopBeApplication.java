@@ -1,9 +1,11 @@
-package com.onlineshop.online_shop_be;
+package com.template;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class OnlineShopBeApplication {
 
 	public static void main(String[] args) {
