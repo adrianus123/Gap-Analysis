@@ -3,16 +3,18 @@ package com.template.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.template.data.dto.request.CreateUpdateItem;
+import com.template.data.dto.request.ItemRequest;
 import com.template.data.dto.response.ApiResponse;
 import com.template.data.dto.response.ItemResponse;
 import com.template.services.ItemService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,13 +36,13 @@ public class ItemController {
         return itemService.getItem(id);
     }
 
-    @PostMapping
-    public ApiResponse<ItemResponse> addItem(@RequestBody CreateUpdateItem request) {
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ApiResponse<ItemResponse> addItem(@ModelAttribute ItemRequest request) {
         return itemService.addItem(request);
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<ItemResponse> updateItem(@PathVariable("id") String id, @RequestBody CreateUpdateItem request) {
+    @PutMapping(path = "/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ApiResponse<ItemResponse> updateItem(@PathVariable("id") String id, @ModelAttribute ItemRequest request) {
         return itemService.updateItem(id, request);
     }
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.template.data.MessageProperties;
-import com.template.data.dto.request.CreateUpdateCustomer;
+import com.template.data.dto.request.CustomerRequest;
 import com.template.data.dto.response.ApiResponse;
 import com.template.data.dto.response.CustomerResponse;
 import com.template.models.Customer;
@@ -70,7 +70,7 @@ public class CustomerService {
         }
     }
 
-    public ApiResponse<CustomerResponse> addCustomer(CreateUpdateCustomer request) {
+    public ApiResponse<CustomerResponse> addCustomer(CustomerRequest request) {
         Customer newCustomer = Customer.builder()
                 .customerName(request.getCustomerName())
                 .customerPic(imageName(request.getCustomerPic(), request.getCustomerName()))
@@ -90,7 +90,7 @@ public class CustomerService {
         }
     }
 
-    public ApiResponse<CustomerResponse> updateCustomer(String id, CreateUpdateCustomer request) {
+    public ApiResponse<CustomerResponse> updateCustomer(String id, CustomerRequest request) {
         try {
             if (id.isEmpty()) {
                 throw new EntityNotFoundException();

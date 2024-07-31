@@ -2,15 +2,17 @@ package com.template.services;
 
 import java.util.List;
 import java.util.Random;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.template.data.MessageProperties;
-import com.template.data.dto.request.CreateUpdateItem;
+import com.template.data.dto.request.ItemRequest;
 import com.template.data.dto.response.ApiResponse;
 import com.template.data.dto.response.ItemResponse;
 import com.template.models.Item;
@@ -29,6 +31,9 @@ public class ItemService {
 
     @Autowired
     private MinioService minioService;
+
+    @Value("${minio.bucketName}")
+    private String bucketName;
 
     public ApiResponse<List<ItemResponse>> getItems() {
         List<ItemResponse> itemResponse = new ArrayList<>();
@@ -66,7 +71,7 @@ public class ItemService {
         }
     }
 
-    public ApiResponse<ItemResponse> addItem(CreateUpdateItem request) {
+    public ApiResponse<ItemResponse> addItem(ItemRequest request) {
         Item newItem = Item.builder()
                 .itemCode("PRD-" + randomNumber())
                 .itemPic(imageName(request.getItemPic(), request.getItemName()))
@@ -74,6 +79,7 @@ public class ItemService {
                 .itemStock(request.getItemStock())
                 .itemPrice(request.getItemPrice())
                 .isAvailable(true)
+                .lastRestock(LocalDate.now())
                 .build();
 
         try {
@@ -85,7 +91,7 @@ public class ItemService {
         }
     }
 
-    public ApiResponse<ItemResponse> updateItem(String id, CreateUpdateItem request) {
+    public ApiResponse<ItemResponse> updateItem(String id, ItemRequest request) {
         try {
             if (id.isEmpty()) {
                 throw new EntityNotFoundException();
@@ -96,10 +102,17 @@ public class ItemService {
                 throw new EntityNotFoundException(messageProperties.getMessage("item.not.found"));
             }
 
+            // Delete existing image in minio
+            if (item.getItemPic() != null) {
+                minioService.delete(item.getItemPic(), bucketName);
+            }
+
+            // Update item data
             item.setItemName(request.getItemName());
             item.setItemPic(imageName(request.getItemPic(), request.getItemName()));
             item.setItemStock(request.getItemStock());
             item.setItemPrice(request.getItemPrice());
+            item.setLastRestock(LocalDate.now());
             itemRepository.save(item);
 
             ItemResponse response = itemResponseBuilder(item);
@@ -142,7 +155,7 @@ public class ItemService {
         return ItemResponse.builder()
                 .itemId(item.getItemId())
                 .itemCode(item.getItemCode())
-                .itemPic(item.getItemPic())
+                .itemPic(generateLink(item.getItemPic()))
                 .itemName(item.getItemName())
                 .itemStock(item.getItemStock())
                 .itemPrice(item.getItemPrice())
@@ -158,6 +171,14 @@ public class ItemService {
     }
 
     protected String imageName(MultipartFile file, String name) {
-        return minioService.upload(file, "simple-online-shop", name);
+        return minioService.upload(file, bucketName, name);
+    }
+
+    protected String generateLink(String objectName) {
+        try {
+            return minioService.getLink(bucketName, objectName, 3600L);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
