@@ -1,7 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from flask_jwt_extended import jwt_required, current_user
 from app.models.job import Job
 from app.schemas.jobs import JobSchema, LocationSchema, JobTypeSchema
+from io import BytesIO
+from datetime import date
+import xlsxwriter
+import locale
 
 job_bp = Blueprint("jobs", __name__)
 
@@ -82,7 +86,7 @@ def create_job():
 @jwt_required()
 def edit_job(id):
     if current_user.role != "employer":
-        return {"message": "Unauthorized access..."}, 403
+        return jsonify({"message": "Unauthorized access...."}), 403
 
     job_id = request.view_args["id"]
     data = request.get_json()
@@ -107,7 +111,7 @@ def edit_job(id):
 @jwt_required()
 def delete_job(id):
     if current_user.role != "employer":
-        return ({"message": "Unauthorized access..."}), 403
+        return jsonify({"message": "Unauthorized access...."}), 403
 
     job_id = request.view_args["id"]
     job = Job.get_job_by_id(job_id=job_id)
@@ -117,6 +121,51 @@ def delete_job(id):
     job.delete()
 
     return ({"message": "Job deleted..."}), 204
+
+
+@job_bp.get("/download")
+@jwt_required()
+def download():
+    if current_user.role != "admin":
+        return jsonify({"message": "Unauthorized access...."}), 403
+
+    locale.setlocale(locale.LC_ALL, "id_ID")
+    jobs = Job.query.all()
+
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    worksheet = workbook.add_worksheet()
+
+    headers = [
+        "No",
+        "Title",
+        "Company",
+        "Description",
+        "Requirements",
+        "Location",
+        "Salary",
+        "Job Type",
+    ]
+
+    for col_num, header in enumerate(headers):
+        worksheet.write(0, col_num, header)
+
+    for row_num, job in enumerate(jobs, start=1):
+        worksheet.write(row_num, 0, row_num)
+        worksheet.write(row_num, 1, job.title)
+        worksheet.write(row_num, 2, job.employee.company.company_name)
+        worksheet.write(row_num, 3, job.description)
+        worksheet.write(row_num, 4, job.requirements)
+        worksheet.write(row_num, 5, job.location)
+        worksheet.write(row_num, 6, locale.currency(int(job.salary), grouping=True))
+        worksheet.write(row_num, 7, job.job_type)
+
+    workbook.close()
+    output.seek(0)
+
+    return send_file(
+        output, download_name=f"Jobs_{date.today()}.xlsx", as_attachment=True
+    )
 
 
 @job_bp.get("/location")
