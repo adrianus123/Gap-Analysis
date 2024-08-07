@@ -1,17 +1,22 @@
 from app.extensions import db
+from datetime import datetime
 
 
 class Job(db.Model):
     __tablename__ = "jobs"
     job_id = db.Column(db.Integer, primary_key=True)
-    employer_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     title = db.Column(db.String(), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
-    requirements = db.Column(db.Text(), nullable=False)
+    company = db.Column(db.String(), nullable=False)
+    teaser = db.Column(db.Text(), nullable=True)
     location = db.Column(db.String(), nullable=False)
-    salary = db.Column(db.Integer, nullable=False)
+    salary = db.Column(db.String(), nullable=True)
     job_type = db.Column(db.String(), nullable=False)
-    employee = db.relationship("User", back_populates="jobs")
+    workplace = db.Column(db.String(), nullable=True)
+    bullet_points = db.Column(db.Text(), nullable=True)
+    classification = db.Column(db.String(), nullable=True)
+    sub_classification = db.Column(db.String(), nullable=True)
+    keyword = db.Column(db.String(), nullable=False)
+    listing_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
         return f"<Job {self.title}>"
@@ -38,3 +43,6 @@ class Job(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+        
+    def rollback(self):
+        db.session.rollback()
