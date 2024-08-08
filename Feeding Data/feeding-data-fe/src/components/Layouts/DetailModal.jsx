@@ -73,13 +73,13 @@ const DetailModal = (props) => {
           </div>
           <div className="space-x-4 inline-flex justify-center">
             <Button
-              classname="px-4 py-2 bg-amber-500 rounded-md text-white"
+              classname="px-4 py-2 bg-amber-500 hover:bg-amber-700 rounded-md text-white"
               event={handleEditModal}
             >
               Edit
             </Button>
             <Button
-              classname="px-4 py-2 bg-red-500 rounded-md text-white"
+              classname="px-4 py-2 bg-red-500 hover:bg-red-700 rounded-md text-white"
               event={handleDeleteModal}
             >
               Delete

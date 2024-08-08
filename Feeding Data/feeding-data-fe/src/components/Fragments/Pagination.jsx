@@ -36,9 +36,9 @@ const Pagination = (props) => {
   }
 
   const active =
-    "transition ease-in-out duration-200 bg-blue-500 text-white hover:bg-blue-700 relative inline-flex items-center px-4 py-2 border text-sm rounded-full";
+    "bg-blue-500 text-white hover:bg-blue-700 relative inline-flex items-center px-4 py-2 border text-sm rounded-full";
   const inactive =
-    "transition ease-in-out duration-200 bg-white border-blue-500 text-gray-500 hover:bg-blue-700 hover:text-white relative inline-flex items-center px-4 py-2 border text-sm rounded-full";
+    "bg-white border-blue-500 text-gray-500 hover:bg-blue-700 hover:text-white relative inline-flex items-center px-4 py-2 border text-sm rounded-full";
 
   return (
     <div className="flex justify-between items-center">
@@ -67,7 +67,7 @@ const Pagination = (props) => {
       </div>
       <div className="py-2 flex justify-end gap-2">
         <Button
-          classname="relative inline-flex items-center px-4 py-2 rounded-l-md transition ease-in-out duration-200 bg-blue-500 text-white text-sm text-gray-500 hover:bg-blue-700 disabled:opacity-70"
+          classname="relative inline-flex items-center px-4 py-2 rounded-l-md bg-blue-500 text-white text-sm text-gray-500 hover:bg-blue-700 disabled:opacity-70"
           event={() => {
             paginateBack();
           }}
@@ -93,7 +93,7 @@ const Pagination = (props) => {
           </ul>
         </nav>
         <Button
-          classname="relative inline-flex items-center px-4 py-2 rounded-r-md transition ease-in-out duration-200 bg-blue-500 text-white text-sm text-gray-500 hover:bg-blue-700 disabled:opacity-70"
+          classname="relative inline-flex items-center px-4 py-2 rounded-r-md bg-blue-500 text-white text-sm text-gray-500 hover:bg-blue-700 disabled:opacity-70"
           event={() => {
             paginateFront();
           }}

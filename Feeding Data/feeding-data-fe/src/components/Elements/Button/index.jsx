@@ -6,7 +6,7 @@ const Button = (props) => {
   return (
     <button
       onClick={event}
-      className={`font-medium ${classname}`}
+      className={`font-medium transition ease-in-out duration-200 ${classname}`}
       disabled={disabled}
     >
       {children}

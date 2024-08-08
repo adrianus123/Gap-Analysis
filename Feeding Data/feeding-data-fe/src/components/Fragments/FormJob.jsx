@@ -80,11 +80,9 @@ const FormJob = (props) => {
           idKey=""
           nameKey=""
         />
-        <input
-          type="submit"
-          className="p-2 bg-green-700 text-white rounded col-span-2"
-          value="Submit"
-        />
+        <Button classname="p-2 bg-green-500 hover:bg-green-700 text-white rounded col-span-2">
+          Submit
+        </Button>
       </form>
     </div>
   );

@@ -12,11 +12,11 @@ const DeleteModal = (props) => {
         <div className="space-y-4">
           <div className="text-lg">Are you sure want to delete this item?</div>
           <div className="flex gap-4 items-center justify-center">
-            <Button classname="text-white px-4 py-2 bg-red-700 rounded">
+            <Button classname="text-white px-4 py-2 bg-red-500 hover:bg-red-700 rounded">
               Delete
             </Button>
             <Button
-              classname="px-4 py-2 border border-red-700 rounded"
+              classname="px-4 py-2 border border-red-700 hover:bg-red-700 hover:text-white rounded"
               event={handleOpen}
             >
               Cancel

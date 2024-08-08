@@ -17,7 +17,7 @@ const FilterForm = () => {
       <Input type="text" name="search" placeholder="Insert keyword..." />
       <Select name="location" data={data} idKey="key" nameKey="value" />
       <Select name="type" data={data} idKey="key" nameKey="value" />
-      <Button classname="bg-amber-500 py-2 px-3 text-white rounded">
+      <Button classname="bg-amber-500 hover:bg-amber-700 py-2 px-3 text-white rounded">
         Search
       </Button>
     </div>
