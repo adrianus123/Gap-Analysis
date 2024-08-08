@@ -20,7 +20,7 @@ const Card = (props) => {
     <>
       <div
         onClick={handleShowModal}
-        className="rounded-lg p-4 bg-white shadow-md space-y-4 cursor-pointer"
+        className="rounded-lg p-4 bg-white shadow-md space-y-4 cursor-pointer transition ease-in duration-200 hover:scale-105"
       >
         <div className="space-y-1">
           <TitleText classname="text-xl" text={data.title} />
