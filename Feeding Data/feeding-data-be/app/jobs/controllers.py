@@ -96,7 +96,12 @@ def get_jobs():
     if job_type:
         query = query.filter(Job.job_type.ilike(f"%{job_type}%"))
 
-    jobs = query.paginate(page=page, per_page=per_page)
+    if tag:
+        query = query.filter(Job.keyword.ilike(f"%{tag}%"))
+
+    jobs = query.order_by(Job.listing_date.desc()).paginate(
+        page=page, per_page=per_page
+    )
 
     result = JobSchema().dump(jobs, many=True)
 
@@ -197,7 +202,26 @@ def delete_job(id):
 
 @job_bp.get("/download")
 def download():
-    jobs = Job.query.all()
+    keyword = request.args.get("keyword", default="", type=str)
+    location = request.args.get("location", default="", type=str)
+    job_type = request.args.get("job_type", default="", type=str)
+    tag = request.args.get("tag", default="", type=str)
+
+    query = Job.query
+
+    if keyword:
+        query = query.filter(Job.title.ilike(f"%{keyword}%"))
+
+    if location:
+        query = query.filter(Job.location.ilike(f"%{location}%"))
+
+    if job_type:
+        query = query.filter(Job.job_type.ilike(f"%{job_type}%"))
+
+    if tag:
+        query = query.filter(Job.keyword.ilike(f"%{tag}%"))
+
+    jobs = query.order_by(Job.listing_date.desc())
 
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
@@ -248,6 +272,7 @@ def get_job_location():
     location = Job.get_job_location()
     if not location:
         return jsonify({"message": "Data not found..."}), 404
+
     result = LocationSchema().dump(location, many=True)
     return jsonify({"data": result}), 200
 
@@ -255,5 +280,9 @@ def get_job_location():
 @job_bp.get("/type")
 def get_job_type():
     job_type = Job.get_job_type()
+
+    if not job_type:
+        return jsonify({"message": "Data not found..."}), 404
+
     result = JobTypeSchema().dump(job_type, many=True)
     return jsonify({"data": result}), 200
