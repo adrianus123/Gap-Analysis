@@ -22,3 +22,11 @@ class LocationSchema(Schema):
 
 class JobTypeSchema(Schema):
     job_type = fields.String()
+
+
+class ClassificationSchema(Schema):
+    classification = fields.String()
+
+
+class SubClassificationSchema(Schema):
+    sub_classification = fields.String()

@@ -1,6 +1,12 @@
 from flask import Blueprint, request, jsonify, send_file
 from app.jobs.models import Job
-from app.jobs.schemas import JobSchema, LocationSchema, JobTypeSchema
+from app.jobs.schemas import (
+    JobSchema,
+    LocationSchema,
+    JobTypeSchema,
+    ClassificationSchema,
+    SubClassificationSchema,
+)
 from io import BytesIO
 from datetime import date, datetime
 from bs4 import BeautifulSoup
@@ -84,6 +90,7 @@ def get_jobs():
     keyword = request.args.get("keyword", default="", type=str)
     location = request.args.get("location", default="", type=str)
     job_type = request.args.get("job_type", default="", type=str)
+    tag = request.args.get("tag", default="", type=str)
 
     query = Job.query
 
@@ -286,3 +293,23 @@ def get_job_type():
 
     result = JobTypeSchema().dump(job_type, many=True)
     return jsonify({"data": result}), 200
+
+
+@job_bp.get("/classification")
+def get_classification():
+    classification = Job.get_classification()
+    if not classification:
+        return jsonify({"message": "Data not found..."}), 404
+
+    result = ClassificationSchema().dump(classification, many=True)
+    return jsonify({"data": result})
+
+
+@job_bp.get("/sub-classification")
+def get_sub_classification():
+    sub_classification = Job.get_sub_classification()
+    if not sub_classification:
+        return jsonify({"message": "Data not found..."}), 404
+
+    result = SubClassificationSchema().dump(sub_classification, many=True)
+    return jsonify({"data": result})

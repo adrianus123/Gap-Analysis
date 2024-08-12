@@ -33,6 +33,14 @@ class Job(db.Model):
     def get_job_type(cls):
         return cls.query.distinct(cls.job_type).all()
 
+    @classmethod
+    def get_classification(cls):
+        return cls.query.distinct(cls.classification).all()
+
+    @classmethod
+    def get_sub_classification(cls):
+        return cls.query.distinct(cls.sub_classification).all()
+
     def add(self):
         db.session.add(self)
         db.session.commit()
@@ -43,6 +51,6 @@ class Job(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        
+
     def rollback(self):
         db.session.rollback()
