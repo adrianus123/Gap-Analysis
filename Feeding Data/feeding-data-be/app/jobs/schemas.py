@@ -14,6 +14,7 @@ class JobSchema(Schema):
     classification = fields.String()
     sub_classification = fields.String()
     listing_date = fields.DateTime()
+    keyword = fields.String()
 
 
 class LocationSchema(Schema):
