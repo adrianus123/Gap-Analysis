@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Modal from "../Fragments/Modal";
 import Button from "../Elements/Button";
 import { IoClose } from "react-icons/io5";
@@ -10,11 +10,16 @@ import Icons from "../Elements/Icons";
 import TitleText from "../Elements/TitleText";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
+import { dateformat } from "../../scripts/scripts";
+import { DeleteJob } from "../../scripts/apis";
+import apiContext from "../../scripts/context";
 
 const DetailModal = (props) => {
   const { open, handleOpen, data } = props;
+  const { handleRefresh, showAlert } = useContext(apiContext);
 
   const [bullets, setBullets] = useState();
+  const [workplaces, setWorkplaces] = useState();
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -22,6 +27,11 @@ const DetailModal = (props) => {
     if (data.bullet_points) {
       let bp = data.bullet_points.split(";");
       setBullets(bp);
+    }
+
+    if (data.workplace) {
+      let wp = data.workplace.split(";");
+      setWorkplaces(wp);
     }
   }, []);
 
@@ -33,12 +43,27 @@ const DetailModal = (props) => {
     setOpenDeleteModal(!openDeleteModal);
   };
 
+  const deleteJob = async (id) => {
+    try {
+      const res = await DeleteJob(id);
+      console.log(res);
+
+      showAlert("success", "Data deleted successfully.");
+      handleRefresh();
+      handleDeleteModal();
+      handleOpen();
+    } catch (error) {
+      showAlert("danger", error);
+      return error;
+    }
+  };
+
   return (
     <>
       <Modal open={open} handleOpen={handleOpen}>
         <Button
           event={handleOpen}
-          classname="fixed top-1/2 left-[47%] px-4 py-8 -left-4 bg-white rounded-l-full"
+          classname="fixed top-1/2 left-[46%] px-4 py-8 -left-4 bg-white rounded-l-full"
         >
           <IoClose size={30} />
         </Button>
@@ -55,11 +80,23 @@ const DetailModal = (props) => {
             />
             <Icons icon={<GoClock size={20} />} text={data.job_type} />
             <Icons icon={<PiMoneyLight size={20} />} text={data.salary} />
-            <div className="text-gray-500">{data.listing_date}</div>
+            <div className="text-gray-500">{dateformat(data.listing_date)}</div>
           </div>
           <div className="space-y-2">
             <TitleText classname="text-xl" text="Information" />
             <p className="leading-7">{data.teaser ? data.teaser : "-"}</p>
+          </div>
+          <div className="space-y-2">
+            <TitleText classname="text-xl" text="Workplace" />
+            <ul>
+              {workplaces ? (
+                workplaces?.map((workplace, i) => (
+                  <li key={i}>• {workplace}</li>
+                ))
+              ) : (
+                <span>-</span>
+              )}
+            </ul>
           </div>
           <div className="space-y-2">
             <TitleText classname="text-xl" text="Other Info" />
@@ -87,8 +124,16 @@ const DetailModal = (props) => {
           </div>
         </div>
       </Modal>
-      <EditModal open={openEditModal} handleOpen={handleEditModal} />
-      <DeleteModal open={openDeleteModal} handleOpen={handleDeleteModal} />
+      <EditModal
+        open={openEditModal}
+        handleOpen={handleEditModal}
+        data={data}
+      />
+      <DeleteModal
+        open={openDeleteModal}
+        handleOpen={handleDeleteModal}
+        action={() => deleteJob(data.job_id)}
+      />
     </>
   );
 };

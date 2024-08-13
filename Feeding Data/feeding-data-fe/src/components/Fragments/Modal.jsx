@@ -6,7 +6,7 @@ const Modal = (props) => {
   return (
     <>
       {open ? (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-40 overflow-auto">
           <div
             className="fixed inset-0 bg-black opacity-50"
             onClick={handleOpen}

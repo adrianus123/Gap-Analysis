@@ -5,7 +5,7 @@ const Icons = (props) => {
   return (
     <div className="flex gap-4 items-center">
       {icon}
-      <span>{text}</span>
+      <span>{text ? text : "-"}</span>
     </div>
   );
 };

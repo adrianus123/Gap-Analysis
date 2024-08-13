@@ -4,7 +4,7 @@ import Button from "../Elements/Button";
 import TitleText from "../Elements/TitleText";
 
 const DeleteModal = (props) => {
-  const { open, handleOpen } = props;
+  const { open, handleOpen, action } = props;
   return (
     <Modal open={open} handleOpen={handleOpen}>
       <div className="bg-white p-8 rounded-lg shadow-lg transform transition-transform duration-500 space-y-8">
@@ -12,7 +12,10 @@ const DeleteModal = (props) => {
         <div className="space-y-4">
           <div className="text-lg">Are you sure want to delete this item?</div>
           <div className="flex gap-4 items-center justify-center">
-            <Button classname="text-white px-4 py-2 bg-red-500 hover:bg-red-700 rounded">
+            <Button
+              classname="text-white px-4 py-2 bg-red-500 hover:bg-red-700 rounded"
+              event={action}
+            >
               Delete
             </Button>
             <Button
