@@ -13,13 +13,16 @@ const EditModal = (props) => {
   const editJob = async (id, data) => {
     try {
       const res = await EditJob(id, data);
-      console.log(res);
 
-      showAlert("success", "Data updated successfully.");
+      if (res.status != 200) {
+        throw new Error("Failed edit data");
+      }
+
+      showAlert("success", res.data.message);
       handleRefresh();
       handleOpen();
     } catch (error) {
-      showAlert("danger", error);
+      showAlert("danger", error.message || "An error occurred");
       return error;
     }
   };

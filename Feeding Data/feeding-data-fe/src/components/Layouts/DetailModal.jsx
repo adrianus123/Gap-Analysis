@@ -46,14 +46,17 @@ const DetailModal = (props) => {
   const deleteJob = async (id) => {
     try {
       const res = await DeleteJob(id);
-      console.log(res);
 
-      showAlert("success", "Data deleted successfully.");
+      if (res.status != 200) {
+        throw new Error("Failed delete job");
+      }
+
+      showAlert("success", res.data.message);
       handleRefresh();
       handleDeleteModal();
       handleOpen();
     } catch (error) {
-      showAlert("danger", error);
+      showAlert("danger", error.message || "An error occurred");
       return error;
     }
   };

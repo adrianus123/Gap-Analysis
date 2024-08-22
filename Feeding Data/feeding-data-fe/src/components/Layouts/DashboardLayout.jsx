@@ -6,7 +6,8 @@ import apiContext from "../../scripts/context";
 import ResultNotFound from "./ResultNotFound";
 
 const DashboardLayout = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const { currentPage, setCurrentPage } = useContext(apiContext);
+
   const [jobsPerPage, setJobsPerPage] = useState(10);
   const [jobs, setJobs] = useState([]);
   const [totalData, setTotalData] = useState(0);
@@ -46,11 +47,15 @@ const DashboardLayout = () => {
 
   const getJobs = async (page, dataSize, keyword, type, location, tag) => {
     try {
-      const data = await GetJobs(page, dataSize, keyword, type, location, tag);
-      setJobs(data.data);
-      setTotalData(data.total_data);
+      const res = await GetJobs(page, dataSize, keyword, type, location, tag);
+
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
+      }
+      setJobs(res.data.data);
+      setTotalData(res.data.total_data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 

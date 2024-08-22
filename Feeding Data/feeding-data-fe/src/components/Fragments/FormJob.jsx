@@ -30,36 +30,52 @@ const FormJob = (props) => {
   const getJobTypes = async () => {
     try {
       const response = await GetJobType();
-      setJobTypes(response.data);
+
+      if (response.status != 200) {
+        throw new Error(response.message);
+      }
+      setJobTypes(response.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
   const getTags = async () => {
     try {
       const response = await GetTags();
-      setTags(response.data);
+
+      if (response.status != 200) {
+        throw new Error(response.message);
+      }
+      setTags(response.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
   const getClassification = async () => {
     try {
       const response = await GetClassification();
-      setClassification(response.data);
+
+      if (response.status != 200) {
+        throw new Error(response.message);
+      }
+      setClassification(response.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
   const getSubClassification = async () => {
     try {
       const response = await GetSubClassification();
-      setSubClassification(response.data);
+
+      if (response.status != 200) {
+        throw new Error(response.message);
+      }
+      setSubClassification(response.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 

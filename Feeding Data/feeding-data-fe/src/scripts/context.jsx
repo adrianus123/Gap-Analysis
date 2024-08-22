@@ -10,12 +10,12 @@ export const ApiProvider = ({ children }) => {
     type: "",
   });
   const [isRefresh, setIsRefresh] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [alert, setAlert] = useState({
     open: false,
     text: "",
     type: "success",
   });
-
   const handleRefresh = () => setIsRefresh(!isRefresh);
   const showAlert = (type, text) => {
     setAlert({ open: true, type, text });
@@ -44,8 +44,10 @@ export const ApiProvider = ({ children }) => {
       alert,
       showAlert,
       hideAlert,
+      currentPage,
+      setCurrentPage,
     }),
-    [filter, isRefresh, alert]
+    [filter, isRefresh, alert, currentPage]
   );
 
   return <apiContext.Provider value={params}>{children}</apiContext.Provider>;

@@ -12,15 +12,16 @@ const AddModal = (props) => {
 
   const addJob = async (data) => {
     try {
-      console.log(data);
       const res = await AddJob(data);
-      console.log(res);
 
-      showAlert("success", "Data created successfully.");
+      if (res.status != 201) {
+        throw new Error("Failed add job");
+      }
+      showAlert("success", res.data.message);
       handleRefresh();
       handleOpen();
     } catch (error) {
-      showAlert("danger", error);
+      showAlert("danger", error.message || "An error occurred");
       return error;
     }
   };

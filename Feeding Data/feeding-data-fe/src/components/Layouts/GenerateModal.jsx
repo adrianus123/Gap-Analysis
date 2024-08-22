@@ -19,10 +19,13 @@ const GenerateModal = (props) => {
 
   const getTags = async () => {
     try {
-      const data = await GetTags();
-      setTags(data.data);
+      const res = await GetTags();
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
+      }
+      setTags(res.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
@@ -40,18 +43,16 @@ const GenerateModal = (props) => {
 
   const generateData = async (tag) => {
     try {
-      if (tag == "") {
-        alert("Error");
-      } else {
-        const res = await GenerateData(tag);
-        console.log(res);
+      const res = await GenerateData(tag);
 
-        showAlert("success", "Data generated successfully.");
-        handleRefresh();
-        handleOpen();
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
       }
+      showAlert("success", res.data.message);
+      handleRefresh();
+      handleOpen();
     } catch (error) {
-      showAlert("danger", error);
+      showAlert("danger", error.message || "An error occurred");
       return error;
     }
   };

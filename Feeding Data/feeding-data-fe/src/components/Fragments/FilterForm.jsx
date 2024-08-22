@@ -11,7 +11,8 @@ const FilterForm = () => {
   const [jobTypes, setJobTypes] = useState([]);
   const [tags, setTags] = useState([]);
 
-  const { isRefresh, handleFilter, handleRefresh } = useContext(apiContext);
+  const { isRefresh, handleFilter, handleRefresh, setCurrentPage } =
+    useContext(apiContext);
 
   useEffect(() => {
     if (isRefresh) {
@@ -23,28 +24,43 @@ const FilterForm = () => {
 
   const getLocation = async () => {
     try {
-      const data = await GetLocation();
-      setLocations(data.data);
+      const res = await GetLocation();
+
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
+      }
+
+      setLocations(res.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
   const getJobType = async () => {
     try {
-      const data = await GetJobType();
-      setJobTypes(data.data);
+      const res = await GetJobType();
+
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
+      }
+
+      setJobTypes(res.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
   const getTag = async () => {
     try {
-      const data = await GetTags();
-      setTags(data.data);
+      const res = await GetTags();
+
+      if (res.status != 200) {
+        throw new Error(res.response.data.message);
+      }
+
+      setTags(res.data.data);
     } catch (error) {
-      return error;
+      console.log(error.message || "An error occurred");
     }
   };
 
@@ -61,6 +77,7 @@ const FilterForm = () => {
   });
 
   const search = (values) => {
+    setCurrentPage(1);
     handleFilter(values);
     handleRefresh();
   };

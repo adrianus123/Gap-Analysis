@@ -7,7 +7,7 @@ export const GetJobs = async (page, dataSize, keyword, type, location, tag) => {
     const response = await axios.get(
       `${BASE_URL}/jobs/?page=${page}&per_page=${dataSize}&keyword=${keyword}&job_type=${type}&location=${location}&tag=${tag}`
     );
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -43,7 +43,7 @@ export const GenerateData = async (tag) => {
 export const GetLocation = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/jobs/location`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -52,7 +52,7 @@ export const GetLocation = async () => {
 export const GetJobType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/jobs/type`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -61,7 +61,7 @@ export const GetJobType = async () => {
 export const GetTags = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/tags/`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -70,7 +70,7 @@ export const GetTags = async () => {
 export const GetClassification = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/jobs/classification`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -79,7 +79,7 @@ export const GetClassification = async () => {
 export const GetSubClassification = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/jobs/sub-classification`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -88,7 +88,7 @@ export const GetSubClassification = async () => {
 export const DeleteJob = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/jobs/${id}`);
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
