@@ -17,6 +17,7 @@ class Job(db.Model):
     sub_classification = db.Column(db.String(), nullable=True)
     keyword = db.Column(db.String(), nullable=False)
     listing_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    key = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"<Job {self.title}>"
@@ -24,6 +25,10 @@ class Job(db.Model):
     @classmethod
     def get_job_by_id(cls, job_id):
         return cls.query.filter_by(job_id=job_id).first()
+
+    @classmethod
+    def get_job_by_key(cls, key):
+        return cls.query.filter_by(key=key).first()
 
     @classmethod
     def get_job_location(cls):

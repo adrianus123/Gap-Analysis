@@ -52,35 +52,38 @@ def generate_jobs(keyword):
     result = dump_data.split("\n")
     match = re.search(r"window\.SEEK_REDUX_DATA\s*=\s*(\{.*\});", result[1])
     if not match:
-        return jsonify({"message": "JSON object not found..."}), 404
+        return jsonify({"message": "JSON object not found"}), 404
 
     json_str = match.group(1)
     data = json.loads(json_str)
     jobs = data["results"]["results"]["jobs"]
 
     for job in jobs:
-        workplace = get_workplace(job["workArrangements"]["data"])
-        bullet_points = job["bulletPoints"]
-        timestamp = get_timestamp(job["listingDate"])
+        data = Job.get_job_by_key(job["id"])
+        if not data:
+            workplace = get_workplace(job["workArrangements"]["data"])
+            bullet_points = job["bulletPoints"]
+            timestamp = get_timestamp(job["listingDate"])
 
-        new_job = Job(
-            title=job["title"],
-            company=job["advertiser"]["description"],
-            teaser=job["teaser"],
-            location=job["jobLocation"]["label"],
-            salary=job["salary"],
-            job_type=job["workType"],
-            workplace=";".join(workplace),
-            bullet_points=";".join(bullet_points),
-            classification=job["classification"]["description"],
-            sub_classification=job["subClassification"]["description"],
-            keyword=tag,
-            listing_date=timestamp,
-        )
+            new_job = Job(
+                title=job["title"],
+                company=job["advertiser"]["description"],
+                teaser=job["teaser"],
+                location=job["jobLocation"]["label"],
+                salary=job["salary"],
+                job_type=job["workType"],
+                workplace=";".join(workplace),
+                bullet_points=";".join(bullet_points),
+                classification=job["classification"]["description"],
+                sub_classification=job["subClassification"]["description"],
+                keyword=tag,
+                listing_date=timestamp,
+                key=job["id"],
+            )
 
-        new_job.add()
+            new_job.add()
 
-    return jsonify({"message": "Get data successfully..."}), 200
+    return jsonify({"message": "Get data successfully"}), 200
 
 
 @job_bp.get("/")
@@ -109,6 +112,9 @@ def get_jobs():
     jobs = query.order_by(Job.listing_date.desc()).paginate(
         page=page, per_page=per_page
     )
+
+    if not jobs:
+        return jsonify({"message": "Jobs not found"}), 404
 
     result = JobSchema().dump(jobs, many=True)
 
@@ -155,7 +161,7 @@ def create_job():
 
     try:
         new_job.add()
-        return jsonify({"message": "Job created..."}), 201
+        return jsonify({"message": "Job created"}), 201
 
     except Exception as e:
         new_job.rollback()
@@ -199,10 +205,10 @@ def delete_job(id):
         job = Job.get_job_by_id(job_id=job_id)
 
         if not job:
-            return ({"message": "Job not found..."}), 404
+            return ({"message": "Job not found"}), 404
         job.delete()
 
-        return jsonify({"message": "Job deleted..."}), 200
+        return jsonify({"message": "Job deleted"}), 200
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
@@ -278,7 +284,7 @@ def download():
 def get_job_location():
     location = Job.get_job_location()
     if not location:
-        return jsonify({"message": "Data not found..."}), 404
+        return jsonify({"message": "Locations not found"}), 404
 
     result = LocationSchema().dump(location, many=True)
     return jsonify({"data": result}), 200
@@ -289,7 +295,7 @@ def get_job_type():
     job_type = Job.get_job_type()
 
     if not job_type:
-        return jsonify({"message": "Data not found..."}), 404
+        return jsonify({"message": "Job types not found"}), 404
 
     result = JobTypeSchema().dump(job_type, many=True)
     return jsonify({"data": result}), 200
@@ -299,7 +305,7 @@ def get_job_type():
 def get_classification():
     classification = Job.get_classification()
     if not classification:
-        return jsonify({"message": "Data not found..."}), 404
+        return jsonify({"message": "Classifications not found"}), 404
 
     result = ClassificationSchema().dump(classification, many=True)
     return jsonify({"data": result})
@@ -309,7 +315,7 @@ def get_classification():
 def get_sub_classification():
     sub_classification = Job.get_sub_classification()
     if not sub_classification:
-        return jsonify({"message": "Data not found..."}), 404
+        return jsonify({"message": "Sub Classifications not found"}), 404
 
     result = SubClassificationSchema().dump(sub_classification, many=True)
     return jsonify({"data": result})
