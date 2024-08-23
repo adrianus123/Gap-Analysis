@@ -10,6 +10,7 @@ from app.jobs.schemas import (
 from io import BytesIO
 from datetime import date, datetime
 from bs4 import BeautifulSoup
+from marshmallow import ValidationError
 import xlsxwriter
 import requests
 import json
@@ -145,6 +146,13 @@ def get_job(id):
 
 @job_bp.post("/add")
 def create_job():
+    request_data = request.json
+
+    try:
+        data = JobSchema().load(request_data)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+
     data = request.get_json()
     new_job = Job(
         title=data.get("title"),
@@ -163,7 +171,10 @@ def create_job():
 
     try:
         new_job.add()
-        return jsonify({"message": "Job created"}), 201
+        return (
+            jsonify({"message": "Job created", "data": JobSchema().dump(new_job)}),
+            201,
+        )
 
     except Exception as e:
         new_job.rollback()
@@ -173,11 +184,15 @@ def create_job():
 @job_bp.put("/<id>")
 def edit_job(id):
     job_id = request.view_args["id"]
-    data = request.get_json()
-
     job = Job.get_job_by_id(job_id=job_id)
     if not job:
-        return {"message": "Job not found"}, 404
+        return jsonify({"message": "Job not found"}), 404
+
+    request_data = request.json
+    try:
+        data = JobSchema().load(request_data)
+    except Exception as e:
+        return jsonify(e.messages), 400
 
     job.title = data.get("title")
     job.company = data.get("company")
@@ -189,11 +204,16 @@ def edit_job(id):
     job.bullet_points = data.get("bullet_points")
     job.classification = data.get("classification")
     job.sub_classification = data.get("sub_classification")
-    job.keyword = data.get("tag")
+    job.keyword = data.get("keyword")
 
     try:
         job.update()
-        return jsonify({"message": "Job updated successfully"}), 200
+        return (
+            jsonify(
+                {"message": "Job updated successfully", "data": JobSchema().dump(job)}
+            ),
+            200,
+        )
     except Exception as e:
         job.rollback()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
