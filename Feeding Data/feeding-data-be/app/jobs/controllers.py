@@ -98,7 +98,9 @@ def get_jobs():
     query = Job.query
 
     if keyword:
-        query = query.filter(Job.title.ilike(f"%{keyword}%"))
+        query = query.filter(
+            (Job.title.ilike(f"%{keyword}%")) | (Job.company.ilike(f"%{keyword}%"))
+        )
 
     if location:
         query = query.filter(Job.location.ilike(f"%{location}%"))
