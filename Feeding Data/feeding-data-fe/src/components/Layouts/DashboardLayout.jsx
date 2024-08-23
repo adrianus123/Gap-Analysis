@@ -52,6 +52,7 @@ const DashboardLayout = () => {
       if (res.status != 200) {
         throw new Error(res.response.data.message);
       }
+      
       setJobs(res.data.data);
       setTotalData(res.data.total_data);
     } catch (error) {

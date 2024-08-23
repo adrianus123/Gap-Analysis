@@ -91,7 +91,7 @@ const FormJob = (props) => {
       job_type: data?.job_type || "",
       classification: data?.classification || "",
       sub_classification: data?.sub_classification || "",
-      tag: data?.keyword || "",
+      tag: data?.tag || "",
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Required"),
