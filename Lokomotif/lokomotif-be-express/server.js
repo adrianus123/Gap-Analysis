@@ -1,79 +1,73 @@
 const express = require("express");
-const { producer, consumer } = require("./KafkaConfig");
 const { mongoose } = require("./config/mongoConfig");
+const { Kafka, Partitioners } = require("kafkajs");
 const Locomotive = require("./schema/locomotive");
-const { default: axios } = require("axios");
 const app = express();
 const PORT = 3000;
-const BASE_URL = "http://localhost:3000";
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello, world!");
+const kafka = new Kafka({
+  clientId: "my-app",
+  brokers: ["localhost:9094"],
 });
 
-app.get("/locomotive", async (req, res) => {
-  try {
-    const locomotive = await Locomotive.find().exec();
-    res.json({ data: locomotive });
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
+const producer = kafka.producer({
+  createPartitioner: Partitioners.LegacyPartitioner,
 });
+const consumer = kafka.consumer({ groupId: "loco-group" });
 
-app.get("/get-kafka", async (req, res) => {
-  try {
-    await consumer.connect();
-    await consumer.stop();
-    await consumer.subscribe({
-      topic: "loco-topic",
-      fromBeginning: false,
-    });
+const createProducer = async () => {
+  await producer.connect();
+};
 
-    await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-        axios
-          .post(`${BASE_URL}/store-data`, JSON.parse(message.value))
-          .then((res) => console.log(`Success: ${JSON.stringify(res.data)}`))
-          .catch((err) => console.error(`Failed: ${err}`));
-      },
-    });
+const createConsumer = async () => {
+  await consumer.connect();
+  await consumer.subscribe({
+    topic: "loco-topic",
+    fromBeginning: true,
+  });
 
-    res.json({ message: "Get data from Kafka and store to MongoDB" });
-  } catch (error) {
-    console.log(error.message);
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+      try {
+        const object = JSON.parse(message.value);
+        const saveData = await Locomotive.create(object.data);
+        console.log("Data berhasil disimpan ke MongoDB: ", saveData);
+      } catch (error) {
+        console.error("Error simpan data ke MongoDB: ", error.message);
+      }
+    },
+  });
+};
 
-    res.status(500).json({ error: error });
-  }
-});
-
-app.post("/store-data", async (req, res) => {
-  try {
-    await Locomotive.create(req.body.data);
-    res.json({ message: "Success" });
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
+createProducer();
+createConsumer();
 
 app.post("/receive-data", async (req, res) => {
   try {
     const data = req.body;
 
-    await producer.connect();
     await producer.send({
       topic: "loco-topic",
       messages: [{ value: JSON.stringify(data) }],
     });
 
-    // axios.get(`${BASE_URL}/get-kafka`);
-    res.json({ message: "Data berhasil dikirim" });
+    res.json({ message: "Data berhasil dikirim ke Kafka" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res
+      .status(500)
+      .json({ error: `Error kirim data ke Kafka: ${error.message}"` });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Aplikasi berjalan di http://localhost:${PORT}`);
+});
+
+process.on("SIGINT", async () => {
+  console.log("Shutting down...");
+  await producer.disconnect();
+  await consumer.disconnect();
+  process.exit(0);
 });
